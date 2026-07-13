@@ -1,7 +1,7 @@
-import { Metadata } from "next";
-import { APP_DESCRIPTION, APP_NAME, APP_URL } from "./constants";
+import { Metadata } from 'next';
+import { APP_DESCRIPTION, APP_NAME, APP_URL } from './constants';
 
-const PAGE_TITLE = `${APP_NAME} — Crypto Utility Tools`
+const PAGE_TITLE = `${APP_NAME} — Crypto Utility Tools`;
 
 export const metadata: Metadata = {
   title: {
@@ -14,10 +14,10 @@ export const metadata: Metadata = {
     title: PAGE_TITLE,
     description: APP_DESCRIPTION,
     siteName: APP_NAME,
-    type: "website",
+    type: 'website',
   },
   twitter: {
-    card: "summary_large_image",
+    card: 'summary_large_image',
     title: PAGE_TITLE,
     description: APP_DESCRIPTION,
   },

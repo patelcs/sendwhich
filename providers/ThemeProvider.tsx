@@ -1,33 +1,29 @@
-"use client";
+'use client';
 
 import {
   ThemeProvider as NextThemesProvider,
   useTheme as useNextTheme,
-} from "next-themes";
-import { createContext, useContext } from "react";
+} from 'next-themes';
+import { createContext, useContext } from 'react';
 
 const ThemeContext = createContext({
-  theme: "dark",
-  toggle: () => { },
+  theme: 'dark',
+  toggle: () => {},
 });
 
 export const useTheme = () => useContext(ThemeContext);
 
-function ThemeContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function ThemeContextProvider({ children }: { children: React.ReactNode }) {
   const { resolvedTheme, setTheme } = useNextTheme();
 
   const toggle = () => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
   return (
     <ThemeContext.Provider
       value={{
-        theme: resolvedTheme ?? "dark",
+        theme: resolvedTheme ?? 'dark',
         toggle,
       }}
     >
@@ -48,9 +44,7 @@ export default function ThemeProvider({
       enableSystem
       disableTransitionOnChange
     >
-      <ThemeContextProvider>
-        {children}
-      </ThemeContextProvider>
+      <ThemeContextProvider>{children}</ThemeContextProvider>
     </NextThemesProvider>
   );
 }

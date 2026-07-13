@@ -1,13 +1,13 @@
-import { Inter } from "next/font/google";
-import "./globals.css";
-import ThemeProvider from "@/providers/ThemeProvider";
-import Navbar from "@/components/layout/Navbar";
-export { metadata } from "@/lib/metadata";
+import { Inter } from 'next/font/google';
+import './globals.css';
+import ThemeProvider from '@/providers/ThemeProvider';
+import Navbar from '@/components/layout/Navbar';
+export { metadata } from '@/lib/metadata';
 
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
+  variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export default function RootLayout({
