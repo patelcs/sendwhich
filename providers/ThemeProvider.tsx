@@ -6,24 +6,35 @@ import {
 } from 'next-themes';
 import { createContext, useContext } from 'react';
 
-const ThemeContext = createContext({
-  theme: 'dark',
-  toggle: () => {},
-});
+type Theme = 'dark' | 'light';
 
-export const useTheme = () => useContext(ThemeContext);
+interface ThemeContextValue {
+  theme: Theme;
+  toggle: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useTheme must be used within ThemeProvider");
+  }
+  return context;
+}
 
 function ThemeContextProvider({ children }: { children: React.ReactNode }) {
   const { resolvedTheme, setTheme } = useNextTheme();
+  const theme: Theme = resolvedTheme === "light" ? "light" : "dark";
 
   const toggle = () => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
     <ThemeContext.Provider
       value={{
-        theme: resolvedTheme ?? 'dark',
+        theme,
         toggle,
       }}
     >
@@ -32,7 +43,7 @@ function ThemeContextProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function ThemeProvider({
+export function ThemeProvider({
   children,
 }: {
   children: React.ReactNode;

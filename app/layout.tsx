@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
-import ThemeProvider from '@/providers/ThemeProvider';
 import Navbar from '@/components/layout/Navbar';
+import { ThemeProvider, WalletProvider } from '@/providers';
 export { metadata } from '@/lib/metadata';
 
 const inter = Inter({
@@ -22,10 +22,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>
-          <Navbar />
-          {children}
-        </ThemeProvider>
+        <WalletProvider>
+          <ThemeProvider>
+            <Navbar />
+            {children}
+          </ThemeProvider>
+        </WalletProvider>
       </body>
     </html>
   );
