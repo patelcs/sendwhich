@@ -18,17 +18,17 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error("useTheme must be used within ThemeProvider");
+    throw new Error('useTheme must be used within ThemeProvider');
   }
   return context;
 }
 
 function ThemeContextProvider({ children }: { children: React.ReactNode }) {
   const { resolvedTheme, setTheme } = useNextTheme();
-  const theme: Theme = resolvedTheme === "light" ? "light" : "dark";
+  const theme: Theme = resolvedTheme === 'light' ? 'light' : 'dark';
 
   const toggle = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -43,11 +43,7 @@ function ThemeContextProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function ThemeProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <NextThemesProvider
       attribute="data-theme"

@@ -1,9 +1,9 @@
 /** App metadata */
-export const APP_NAME = 'Sandwichh';
+export const APP_NAME = 'SendWhich';
 export const APP_DESCRIPTION =
   'Crypto utility tools. Gas-efficient, secure, and open-source.';
-export const APP_URL = 'https://sandwichh.patelcs.in';
-export const DOC_URL = 'https://docs.sandwichh.patelcs.in';
+export const APP_URL = 'https://sendwhich.patelcs.in';
+export const DOC_URL = 'https://docs.sendwhich.patelcs.in';
 
 /** Portfolio link */
 export const PORTFOLIO_URL = 'https://patelcs.in/';
