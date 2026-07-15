@@ -1,10 +1,11 @@
 'use client';
 
-import { WalletAdapter } from '@/wallets/adapter/WalletAdapter';
-import { createWallet } from '@/wallets/factory';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { createWalletRegistry, WalletOption, WalletState, WalletInterface } from '@/wallet-adapter';
 
-const WalletContext = createContext<WalletAdapter | null>(null);
+interface WalletContextValues extends WalletState, Omit<WalletInterface, 'state'> { }
+
+const WalletContext = createContext<WalletContextValues | null>(null);
 
 export const useWallet = () => {
   const wallet = useContext(WalletContext);
@@ -14,14 +15,31 @@ export const useWallet = () => {
   return wallet;
 };
 
-export function WalletProvider({ children }: { children: React.ReactNode }) {
-  const [wallet] = useState(() => createWallet());
+export default function WalletProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [registry] = useState(() => createWalletRegistry());
+  const [walletOptions, setWalletOptions] = useState<readonly WalletOption[]>(() => registry.walletOptions);
+  const [state, setState] = useState<WalletState>(() => registry.state);
 
   useEffect(() => {
-    void wallet.initialize();
-  }, [wallet]);
+    const unSubscribers = [
+      registry.on('walletsChanged', setWalletOptions),
+      registry.on('stateUpdated', setState),
+    ];
+
+    void registry.initialize();
+
+    return () => {
+      unSubscribers.forEach((unSubscribe) => unSubscribe());
+    };
+  }, [registry]);
 
   return (
-    <WalletContext.Provider value={wallet}>{children}</WalletContext.Provider>
+    <WalletContext.Provider value={{ ...registry, ...state, walletOptions }}>
+      {children}
+    </WalletContext.Provider>
   );
 }

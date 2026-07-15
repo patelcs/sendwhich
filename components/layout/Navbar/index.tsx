@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, Moon, MoreHorizontal, Sun, X, Zap } from 'lucide-react';
 import { useMounted } from '@/hooks';
-import { useTheme, useWallet } from '@/providers';
+import { useWallet } from '@/providers/WalletProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 import ConnectButton from '../../wallet/ConnectButton';
 import { MOBILE_NAV_LINKS, MORE_LINKS, NAV_LINKS } from './config';
 
@@ -43,8 +44,8 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${pathname === link.href
-                    ? 'bg-blue-500/10 text-blue-500'
-                    : 'text-(--muted) hover:bg-(--accent) hover:text-(--foreground)'
+                  ? 'bg-blue-500/10 text-blue-500'
+                  : 'text-(--muted) hover:bg-(--accent) hover:text-(--foreground)'
                   }`}
               >
                 {link.label}
@@ -89,8 +90,8 @@ export default function Navbar() {
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${pathname === link.href
-                      ? 'bg-blue-500/10 text-blue-500'
-                      : 'text-(--muted) hover:bg-(--accent) hover:text-(--foreground)'
+                    ? 'bg-blue-500/10 text-blue-500'
+                    : 'text-(--muted) hover:bg-(--accent) hover:text-(--foreground)'
                     }`}
                 >
                   {link.label}
@@ -185,8 +186,8 @@ export default function Navbar() {
                     href={href}
                     aria-current={isActive ? 'page' : undefined}
                     className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${isActive
-                        ? 'text-blue-500'
-                        : 'text-(--muted) hover:text-(--foreground)'
+                      ? 'text-blue-500'
+                      : 'text-(--muted) hover:text-(--foreground)'
                       }`}
                   >
                     <Icon size={20} aria-hidden="true" />
@@ -200,8 +201,8 @@ export default function Navbar() {
                 aria-expanded={moreOpen}
                 aria-controls="mobile-more-menu"
                 className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${moreOpen
-                    ? 'text-blue-500'
-                    : 'text-(--muted) hover:text-(--foreground)'
+                  ? 'text-blue-500'
+                  : 'text-(--muted) hover:text-(--foreground)'
                   }`}
               >
                 <MoreHorizontal size={20} aria-hidden="true" />
