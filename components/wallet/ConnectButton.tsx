@@ -24,8 +24,15 @@ export default function ConnectButton({
     new Set(),
   );
   const [isAccountsOpen, setIsAccountsOpen] = useState(false);
-  const { walletOptions, status, accounts, account, setAccount, connect, disconnect } =
-    useWallet();
+  const {
+    walletOptions,
+    status,
+    accounts,
+    activeAccount,
+    switchAccount,
+    connect,
+    disconnect,
+  } = useWallet();
 
   const handleConnect = (walletId: string) => {
     void connect(walletId);
@@ -43,7 +50,7 @@ export default function ConnectButton({
 
   const handleAccountSelect = (selectedAccount: ActiveAccount) => {
     if (!selectedAccount) return;
-    setAccount(selectedAccount);
+    switchAccount(selectedAccount);
     setIsAccountsOpen(false);
   };
 
@@ -60,7 +67,9 @@ export default function ConnectButton({
           aria-controls="connected-accounts"
           className="flex items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-sm font-semibold text-blue-500 shadow-sm shadow-blue-500/15 transition-colors hover:border-blue-500/50 hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
         >
-          <span className="max-w-28 truncate">{formatAccount(account)}</span>
+          <span className="max-w-28 truncate">
+            {formatAccount(activeAccount)}
+          </span>
           <ChevronDown size={16} aria-hidden="true" />
         </button>
 
@@ -76,7 +85,7 @@ export default function ConnectButton({
             </p>
             <div className="space-y-1">
               {connectedAccounts.map((connectedAccount) => {
-                const isSelected = connectedAccount === account;
+                const isSelected = connectedAccount === activeAccount;
 
                 return (
                   <button
@@ -116,8 +125,9 @@ export default function ConnectButton({
         type="button"
         onClick={handleClick}
         disabled={status === 'connecting'}
-        className={`flex items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 text-sm font-semibold text-blue-500 shadow-sm shadow-blue-500/15 transition-colors hover:border-blue-500/50 hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${iconOnly ? 'p-2' : 'px-3 py-2'
-          }`}
+        className={`flex items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 text-sm font-semibold text-blue-500 shadow-sm shadow-blue-500/15 transition-colors hover:border-blue-500/50 hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
+          iconOnly ? 'p-2' : 'px-3 py-2'
+        }`}
         aria-label={iconOnly ? 'Connect wallet' : undefined}
       >
         <Wallet size={16} aria-hidden="true" />
@@ -160,7 +170,7 @@ export default function ConnectButton({
                     className="flex w-full items-center gap-3 rounded-xl border border-(--border) bg-(--background) px-4 py-3 text-left text-sm font-medium text-(--foreground) transition-all hover:border-blue-500/50 hover:bg-blue-500/5"
                   >
                     {walletOption.icon &&
-                      !failedWalletIcons.has(walletOption.id) ? (
+                    !failedWalletIcons.has(walletOption.id) ? (
                       // Wallet providers supply these external icon URLs at runtime.
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

@@ -1,4 +1,4 @@
-import type { EIP1193Provider } from "viem";
+import type { EIP1193Provider } from 'viem';
 
 export interface EIP6963ProviderInfo {
   uuid: string;
@@ -14,8 +14,8 @@ export interface EIP6963ProviderDetail {
 
 declare global {
   interface WindowEventMap {
-    "eip6963:announceProvider": CustomEvent<EIP6963ProviderDetail>;
+    'eip6963:announceProvider': CustomEvent<EIP6963ProviderDetail>;
   }
 }
 
-export { EIP1193Provider }
+export { EIP1193Provider };

@@ -8,28 +8,33 @@ export type Account = `0x${string}`;
 export type ActiveAccount = Account | null;
 export type Accounts = readonly Account[];
 
+export type ChainId = number;
+
 export interface WalletOption {
   id: string;
   name: string;
   icon: string;
 }
 
-export interface WalletState {
+export interface WalletEvents {
+  uiConfigsUpdated: UIConfigs;
+  statusUpdated: Status;
+  chainIdUpdated: ChainId;
+  accountsUpdated: Accounts;
+  accountUpdated: ActiveAccount;
+  walletAdded: WalletOption;
+}
+
+export interface AdapterInterface {
   uiConfigs: UIConfigs;
   status: Status;
+  chainId: ChainId;
   accounts: Accounts;
-  account: ActiveAccount;
-}
-
-export interface WalletEvents {
-  stateUpdated: WalletState;
-  walletsUpdated: readonly WalletOption[];
-}
-
-export interface WalletInterface {
-  connect: (walletId: string) => Promise<void>;
-  disconnect: () => Promise<void>;
-  setAccount: (account: Account) => void;
-  state: WalletState;
+  activeAccount: ActiveAccount;
   walletOptions: readonly WalletOption[];
+  initialize(): Promise<void>;
+  connect(walletId: string): Promise<void>;
+  disconnect(): Promise<void>;
+  switchAccount(account: Account): void;
+  switchChain(chainId: ChainId): Promise<void>;
 }

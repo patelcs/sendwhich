@@ -1,1 +1,1 @@
-export * from './MiniKitAdapter'
+export * from './MiniKitAdapter';

@@ -1,5 +1,11 @@
 import { initializeEruda } from '../../lib';
-import { WalletAdapter, UIConfigs, WalletOption, Account } from '../../core';
+import {
+  WalletAdapter,
+  UIConfigs,
+  Account,
+  ChainId,
+  WalletOption,
+} from '../../core';
 import { MiniKit } from '@worldcoin/minikit-js';
 import type {
   CommandResultByVia,
@@ -8,30 +14,47 @@ import type {
 } from '@worldcoin/minikit-js/commands';
 
 export class MiniKitAdapter extends WalletAdapter {
-
-  private readonly uiConfigs: UIConfigs = {
-    mobileNavbarType: 'Bottom',
-  };
+  private _install = MiniKit.install();
 
   constructor() {
     super();
-    this.addWalletOption({
-      id: 'minikit-wallet',
-      name: 'MiniKit Wallet',
-      icon: ''
-    })
-    this.updateState({ uiConfigs: this.uiConfigs });
   }
 
-  initialize = async () => {
+  get uiConfigs(): UIConfigs {
+    return {
+      mobileNavbarType: 'Bottom',
+    };
+  }
+
+  get chainId(): ChainId {
+    return 480;
+  }
+
+  get walletOptions(): readonly WalletOption[] {
+    return [
+      {
+        id: 'minikit-wallet',
+        name: 'MiniKit Wallet',
+        icon: '',
+      },
+    ];
+  }
+
+  get isMinikitEnvironment() {
+    return this._install.success;
+  }
+
+  async initialize() {
+    if (!this.isMinikitEnvironment)
+      throw new Error('Not in MiniApp Environment');
     try {
       await initializeEruda();
     } catch (error) {
-      console.error("initialization error:", error);
+      console.error('initialization error:', error);
     }
   }
 
-  connect = async (walletId: string) => {
+  async connect(walletId: string) {
     const input = {
       nonce: 'randomnonce123456',
     } satisfies MiniKitWalletAuthOptions;
@@ -39,18 +62,22 @@ export class MiniKitAdapter extends WalletAdapter {
       const result: CommandResultByVia<WalletAuthResult> =
         await MiniKit.walletAuth(input);
       const account = result.data.address as Account;
-      this.updateState({ status: 'connected', accounts: [account], account });
-      console.log('executedWith:', result.executedWith); // "minikit" | "wagmi" | "fallback"
-      console.log('address:', result.data.address);
-      console.log('signature:', result.data.signature);
-      console.log('result:', result);
+      this.updateAccounts([account]);
     } catch (error) {
       console.error('Command failed', error);
-      this.updateState({ status: 'disconnected', accounts: [], account: null });
+      this.updateAccounts([]);
     }
   }
 
-  disconnect = async () => {
-    this.updateState({ status: 'disconnected', accounts: [], account: null });
+  async disconnect(): Promise<void> {
+    this.resetState();
+  }
+
+  async switchAccount(account: Account): Promise<void> {
+    throw new Error('Switching account not supported');
+  }
+
+  async switchChain(chainId: ChainId): Promise<void> {
+    throw new Error('Switching chain not supported');
   }
 }

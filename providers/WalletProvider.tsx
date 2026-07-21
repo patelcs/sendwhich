@@ -1,9 +1,14 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createWalletRegistry, WalletOption, WalletState, WalletInterface } from '@/wallet-adapter';
+import {
+  WalletRegistry,
+  InjectedWalletAdapter,
+  MiniKitAdapter,
+  type AdapterInterface,
+} from '@/wallet-adapter';
 
-interface WalletContextValues extends WalletState, Omit<WalletInterface, 'state'> { }
+interface WalletContextValues extends Omit<AdapterInterface, 'initialize'> {}
 
 const WalletContext = createContext<WalletContextValues | null>(null);
 
@@ -15,19 +20,37 @@ export const useWallet = () => {
   return wallet;
 };
 
+export function createWalletRegistry() {
+  const miniKitAdapter = new MiniKitAdapter();
+  if (miniKitAdapter.isMinikitEnvironment) {
+    return new WalletRegistry([miniKitAdapter]);
+  }
+  return new WalletRegistry([new InjectedWalletAdapter()]);
+}
+
 export default function WalletProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [registry] = useState(() => createWalletRegistry());
-  const [walletOptions, setWalletOptions] = useState<readonly WalletOption[]>(() => registry.walletOptions);
-  const [state, setState] = useState<WalletState>(() => registry.state);
+  const [walletOptions, setWalletOptions] = useState(registry.walletOptions);
+  const [uiConfigs, setUIConfigs] = useState(registry.uiConfigs);
+  const [status, setStatus] = useState(registry.status);
+  const [chainId, setChainId] = useState(registry.chainId);
+  const [accounts, switchAccounts] = useState(registry.accounts);
+  const [activeAccount, setActiveAccount] = useState(registry.activeAccount);
 
   useEffect(() => {
     const unSubscribers = [
-      registry.on('walletsChanged', setWalletOptions),
-      registry.on('stateUpdated', setState),
+      registry.on('uiConfigsUpdated', setUIConfigs),
+      registry.on('walletAdded', () =>
+        setWalletOptions(registry.walletOptions),
+      ),
+      registry.on('statusUpdated', setStatus),
+      registry.on('chainIdUpdated', setChainId),
+      registry.on('accountsUpdated', switchAccounts),
+      registry.on('accountUpdated', setActiveAccount),
     ];
 
     void registry.initialize();
@@ -38,7 +61,20 @@ export default function WalletProvider({
   }, [registry]);
 
   return (
-    <WalletContext.Provider value={{ ...registry, ...state, walletOptions }}>
+    <WalletContext.Provider
+      value={{
+        uiConfigs,
+        status,
+        chainId,
+        accounts,
+        activeAccount,
+        walletOptions,
+        disconnect: registry.disconnect.bind(registry),
+        connect: registry.connect.bind(registry),
+        switchAccount: registry.switchAccount.bind(registry),
+        switchChain: registry.switchChain.bind(registry),
+      }}
+    >
       {children}
     </WalletContext.Provider>
   );
