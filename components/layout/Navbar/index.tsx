@@ -16,8 +16,8 @@ export default function Navbar() {
   const [moreOpen, setMoreOpen] = useState(false);
   const { theme, toggle } = useTheme();
   const pathname = usePathname();
-  const { uiConfigs } = useWallet();
-  const usesBottomMobileNavbar = uiConfigs.mobileNavbarType === 'Bottom';
+  const { configs } = useWallet();
+  const usesBottomMobileNavbar = configs.mobileNavbarType === 'Bottom';
 
   if (!mounted) return null;
 

@@ -8,7 +8,14 @@ import {
   type AdapterInterface,
 } from '@/wallet-adapter';
 
-interface WalletContextValues extends Omit<AdapterInterface, 'initialize'> {}
+export interface UIConfigs {
+  mobileNavbarType: 'DropDown' | 'Bottom';
+}
+
+interface WalletContextValues extends Omit<
+  AdapterInterface<UIConfigs>,
+  'initialize'
+> {}
 
 const WalletContext = createContext<WalletContextValues | null>(null);
 
@@ -21,11 +28,22 @@ export const useWallet = () => {
 };
 
 export function createWalletRegistry() {
-  const miniKitAdapter = new MiniKitAdapter();
+  const miniKitAdapter = new MiniKitAdapter<UIConfigs>({
+    configs: { mobileNavbarType: 'Bottom' },
+  });
   if (miniKitAdapter.isMinikitEnvironment) {
-    return new WalletRegistry([miniKitAdapter]);
+    return new WalletRegistry<UIConfigs>({
+      adapters: [miniKitAdapter],
+      configs: { mobileNavbarType: 'Bottom' },
+    });
   }
-  return new WalletRegistry([new InjectedWalletAdapter()]);
+  const injectedWalletAdapter = new InjectedWalletAdapter<UIConfigs>({
+    configs: { mobileNavbarType: 'DropDown' },
+  });
+  return new WalletRegistry<UIConfigs>({
+    adapters: [injectedWalletAdapter],
+    configs: { mobileNavbarType: 'Bottom' },
+  });
 }
 
 export default function WalletProvider({
@@ -35,7 +53,7 @@ export default function WalletProvider({
 }) {
   const [registry] = useState(() => createWalletRegistry());
   const [walletOptions, setWalletOptions] = useState(registry.walletOptions);
-  const [uiConfigs, setUIConfigs] = useState(registry.uiConfigs);
+  const [configs, setConfigs] = useState(registry.configs);
   const [status, setStatus] = useState(registry.status);
   const [chainId, setChainId] = useState(registry.chainId);
   const [accounts, switchAccounts] = useState(registry.accounts);
@@ -43,7 +61,7 @@ export default function WalletProvider({
 
   useEffect(() => {
     const unSubscribers = [
-      registry.on('uiConfigsUpdated', setUIConfigs),
+      registry.on('configsUpdated', setConfigs),
       registry.on('walletAdded', () =>
         setWalletOptions(registry.walletOptions),
       ),
@@ -63,7 +81,7 @@ export default function WalletProvider({
   return (
     <WalletContext.Provider
       value={{
-        uiConfigs,
+        configs,
         status,
         chainId,
         accounts,

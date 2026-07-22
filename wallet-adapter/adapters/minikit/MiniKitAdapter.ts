@@ -1,11 +1,5 @@
 import { initializeEruda } from '../../lib';
-import {
-  WalletAdapter,
-  UIConfigs,
-  Account,
-  ChainId,
-  WalletOption,
-} from '../../core';
+import { WalletAdapter, Account, ChainId, WalletOption } from '../../core';
 import { MiniKit } from '@worldcoin/minikit-js';
 import type {
   CommandResultByVia,
@@ -13,18 +7,8 @@ import type {
   WalletAuthResult,
 } from '@worldcoin/minikit-js/commands';
 
-export class MiniKitAdapter extends WalletAdapter {
+export class MiniKitAdapter<Configs = unknown> extends WalletAdapter<Configs> {
   private _install = MiniKit.install();
-
-  constructor() {
-    super();
-  }
-
-  get uiConfigs(): UIConfigs {
-    return {
-      mobileNavbarType: 'Bottom',
-    };
-  }
 
   get chainId(): ChainId {
     return 480;

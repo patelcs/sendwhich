@@ -1,13 +1,7 @@
-export interface UIConfigs {
-  mobileNavbarType: 'DropDown' | 'Bottom';
-}
-
 export type Status = 'disconnected' | 'connecting' | 'connected';
-
 export type Account = `0x${string}`;
 export type ActiveAccount = Account | null;
 export type Accounts = readonly Account[];
-
 export type ChainId = number;
 
 export interface WalletOption {
@@ -16,8 +10,8 @@ export interface WalletOption {
   icon: string;
 }
 
-export interface WalletEvents {
-  uiConfigsUpdated: UIConfigs;
+export interface WalletEvents<Configs = unknown> {
+  configsUpdated: unknown extends Configs ? unknown : Configs;
   statusUpdated: Status;
   chainIdUpdated: ChainId;
   accountsUpdated: Accounts;
@@ -25,8 +19,8 @@ export interface WalletEvents {
   walletAdded: WalletOption;
 }
 
-export interface AdapterInterface {
-  uiConfigs: UIConfigs;
+export interface AdapterInterface<Configs = unknown> {
+  configs: unknown extends Configs ? unknown : Configs;
   status: Status;
   chainId: ChainId;
   accounts: Accounts;

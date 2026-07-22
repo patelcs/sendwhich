@@ -1,28 +1,14 @@
-import {
-  WalletAdapter,
-  Accounts,
-  UIConfigs,
-  Account,
-  ChainId,
-} from '../../core';
+import { WalletAdapter, Accounts, Account, ChainId } from '../../core';
 import { EIP6963ProviderDetail, EIP1193Provider } from './types';
 import { createWalletClient, custom, WalletClient } from 'viem';
 import { mainnet } from 'viem/chains';
 
-export class InjectedWalletAdapter extends WalletAdapter {
+export class InjectedWalletAdapter<
+  Configs = unknown,
+> extends WalletAdapter<Configs> {
   private readonly _providers = new Map<string, EIP1193Provider>();
   private _provider: EIP1193Provider | undefined = undefined;
   private _client: WalletClient | null = null;
-
-  constructor() {
-    super();
-  }
-
-  get uiConfigs(): UIConfigs {
-    return {
-      mobileNavbarType: 'DropDown',
-    };
-  }
 
   async initialize() {
     window.addEventListener(

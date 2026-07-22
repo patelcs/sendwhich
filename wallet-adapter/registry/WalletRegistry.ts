@@ -7,31 +7,37 @@ import {
   Accounts,
   Account,
   Status,
-  UIConfigs,
-  UI_CONFIGS,
   WalletAdapter,
   ChainId,
+  type AdapterOptions,
 } from '../core';
 
-export type ActiveWallet = WalletAdapter | null;
+export type RegistryOptions<Configs> = AdapterOptions<Configs> & {
+  adapters: WalletAdapter<Configs>[];
+};
 
-export class WalletRegistry
-  extends EventEmitter<WalletEvents>
-  implements AdapterInterface
+export class WalletRegistry<Configs = unknown>
+  extends EventEmitter<WalletEvents<Configs>>
+  implements AdapterInterface<Configs>
 {
-  private _wallet: ActiveWallet = null;
+  private _configs!: Configs;
+  private _wallet: WalletAdapter<Configs> | null = null;
+  private readonly _adapters: WalletAdapter<Configs>[];
 
-  constructor(private readonly adapters: WalletAdapter[]) {
+  constructor(options: RegistryOptions<Configs>) {
     super();
-    if (adapters.length === 0) throw new Error('Empty wallet adapter array');
-    if (adapters.length === 1) this._wallet = adapters[0];
-    this.adapters.forEach((a) =>
+    if (options.adapters.length === 0)
+      throw new Error('Empty wallet adapter array');
+    this._adapters = options.adapters;
+    if (this._adapters.length === 1) this._wallet = this._adapters[0];
+    this._adapters.forEach((a) =>
       a.on('walletAdded', (w) => this.emit('walletAdded', w)),
     );
+    if ('configs' in options) this._configs = options.configs;
   }
 
-  get uiConfigs(): UIConfigs {
-    return this._wallet?.uiConfigs ?? UI_CONFIGS;
+  get configs(): unknown extends Configs ? unknown : Configs {
+    return this._wallet?.configs ?? this._configs;
   }
 
   get status(): Status {
@@ -51,11 +57,11 @@ export class WalletRegistry
   }
 
   get walletOptions(): readonly WalletOption[] {
-    return this.adapters.flatMap((a) => a.walletOptions);
+    return this._adapters.flatMap((a) => a.walletOptions);
   }
 
   async initialize() {
-    await Promise.all(this.adapters.map((adapter) => adapter.initialize()));
+    await Promise.all(this._adapters.map((adapter) => adapter.initialize()));
   }
 
   async connect(walletId: string) {
@@ -65,8 +71,8 @@ export class WalletRegistry
     }
     this._wallet?.removeReEmitter(this);
     this._wallet = adapter;
-    this._wallet.addReEmitter(this);
-    await adapter.connect(walletId);
+    this._wallet!.addReEmitter(this);
+    await this._wallet!.connect(walletId);
   }
 
   async disconnect() {
@@ -88,7 +94,7 @@ export class WalletRegistry
   }
 
   private findAdapter(walletId: string) {
-    for (const adapter of this.adapters) {
+    for (const adapter of this._adapters) {
       for (const walletOption of adapter.walletOptions) {
         if (walletOption.id === walletId) return adapter;
       }
