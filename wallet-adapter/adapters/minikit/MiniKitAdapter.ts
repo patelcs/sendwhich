@@ -7,7 +7,7 @@ import type {
   WalletAuthResult,
 } from '@worldcoin/minikit-js/commands';
 
-export class MiniKitAdapter<Configs = unknown> extends WalletAdapter<Configs> {
+export class MiniKitAdapter extends WalletAdapter {
   private _install = MiniKit.install();
 
   get chainId(): ChainId {

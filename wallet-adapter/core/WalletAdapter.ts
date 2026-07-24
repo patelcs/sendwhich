@@ -10,29 +10,14 @@ import {
   ChainId,
 } from './types';
 
-export type AdapterOptions<Configs> = unknown extends Configs
-  ? {}
-  : { configs: Configs };
-
-export abstract class WalletAdapter<Configs = unknown>
-  extends EventEmitter<WalletEvents<Configs>>
-  implements AdapterInterface<Configs>
-{
-  private _configs!: Configs;
+export abstract class WalletAdapter
+  extends EventEmitter<WalletEvents>
+  implements AdapterInterface {
   private _status: Status = 'disconnected';
   private _chainId: ChainId = 0;
   private _accounts: Accounts = [];
   private _account: ActiveAccount = null;
   private _walletOptions = new Map<string, WalletOption>();
-
-  constructor(options: AdapterOptions<Configs>) {
-    super();
-    if ('configs' in options) this._configs = options.configs;
-  }
-
-  get configs(): unknown extends Configs ? unknown : Configs {
-    return this._configs;
-  }
 
   get status(): Status {
     return this._status;

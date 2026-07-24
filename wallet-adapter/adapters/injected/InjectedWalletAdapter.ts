@@ -3,9 +3,7 @@ import { EIP6963ProviderDetail, EIP1193Provider } from './types';
 import { createWalletClient, custom, WalletClient } from 'viem';
 import { mainnet } from 'viem/chains';
 
-export class InjectedWalletAdapter<
-  Configs = unknown,
-> extends WalletAdapter<Configs> {
+export class InjectedWalletAdapter extends WalletAdapter {
   private readonly _providers = new Map<string, EIP1193Provider>();
   private _provider: EIP1193Provider | undefined = undefined;
   private _client: WalletClient | null = null;

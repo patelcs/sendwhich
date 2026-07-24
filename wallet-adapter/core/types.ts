@@ -10,8 +10,7 @@ export interface WalletOption {
   icon: string;
 }
 
-export interface WalletEvents<Configs = unknown> {
-  configsUpdated: unknown extends Configs ? unknown : Configs;
+export interface WalletEvents {
   statusUpdated: Status;
   chainIdUpdated: ChainId;
   accountsUpdated: Accounts;
@@ -19,8 +18,7 @@ export interface WalletEvents<Configs = unknown> {
   walletAdded: WalletOption;
 }
 
-export interface AdapterInterface<Configs = unknown> {
-  configs: unknown extends Configs ? unknown : Configs;
+export interface AdapterInterface {
   status: Status;
   chainId: ChainId;
   accounts: Accounts;

@@ -8,14 +8,10 @@ import {
   type AdapterInterface,
 } from '@/wallet-adapter';
 
-export interface UIConfigs {
-  mobileNavbarType: 'DropDown' | 'Bottom';
-}
-
 interface WalletContextValues extends Omit<
-  AdapterInterface<UIConfigs>,
+  AdapterInterface,
   'initialize'
-> {}
+> { }
 
 const WalletContext = createContext<WalletContextValues | null>(null);
 
@@ -28,22 +24,12 @@ export const useWallet = () => {
 };
 
 export function createWalletRegistry() {
-  const miniKitAdapter = new MiniKitAdapter<UIConfigs>({
-    configs: { mobileNavbarType: 'Bottom' },
-  });
+  const miniKitAdapter = new MiniKitAdapter();
   if (miniKitAdapter.isMinikitEnvironment) {
-    return new WalletRegistry<UIConfigs>({
-      adapters: [miniKitAdapter],
-      configs: { mobileNavbarType: 'Bottom' },
-    });
+    return new WalletRegistry([miniKitAdapter]);
   }
-  const injectedWalletAdapter = new InjectedWalletAdapter<UIConfigs>({
-    configs: { mobileNavbarType: 'DropDown' },
-  });
-  return new WalletRegistry<UIConfigs>({
-    adapters: [injectedWalletAdapter],
-    configs: { mobileNavbarType: 'Bottom' },
-  });
+  const injectedWalletAdapter = new InjectedWalletAdapter();
+  return new WalletRegistry([injectedWalletAdapter]);
 }
 
 export default function WalletProvider({
@@ -53,7 +39,6 @@ export default function WalletProvider({
 }) {
   const [registry] = useState(() => createWalletRegistry());
   const [walletOptions, setWalletOptions] = useState(registry.walletOptions);
-  const [configs, setConfigs] = useState(registry.configs);
   const [status, setStatus] = useState(registry.status);
   const [chainId, setChainId] = useState(registry.chainId);
   const [accounts, switchAccounts] = useState(registry.accounts);
@@ -61,7 +46,6 @@ export default function WalletProvider({
 
   useEffect(() => {
     const unSubscribers = [
-      registry.on('configsUpdated', setConfigs),
       registry.on('walletAdded', () =>
         setWalletOptions(registry.walletOptions),
       ),
@@ -81,7 +65,6 @@ export default function WalletProvider({
   return (
     <WalletContext.Provider
       value={{
-        configs,
         status,
         chainId,
         accounts,

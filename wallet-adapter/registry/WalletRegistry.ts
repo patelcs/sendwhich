@@ -8,36 +8,23 @@ import {
   Account,
   Status,
   WalletAdapter,
-  ChainId,
-  type AdapterOptions,
+  ChainId
 } from '../core';
 
-export type RegistryOptions<Configs> = AdapterOptions<Configs> & {
-  adapters: WalletAdapter<Configs>[];
-};
+export class WalletRegistry
+  extends EventEmitter<WalletEvents>
+  implements AdapterInterface {
+  private _wallet: WalletAdapter | null = null;
+  ;
 
-export class WalletRegistry<Configs = unknown>
-  extends EventEmitter<WalletEvents<Configs>>
-  implements AdapterInterface<Configs>
-{
-  private _configs!: Configs;
-  private _wallet: WalletAdapter<Configs> | null = null;
-  private readonly _adapters: WalletAdapter<Configs>[];
-
-  constructor(options: RegistryOptions<Configs>) {
+  constructor(private readonly _adapters: WalletAdapter[]) {
     super();
-    if (options.adapters.length === 0)
+    if (this._adapters.length === 0)
       throw new Error('Empty wallet adapter array');
-    this._adapters = options.adapters;
     if (this._adapters.length === 1) this._wallet = this._adapters[0];
     this._adapters.forEach((a) =>
       a.on('walletAdded', (w) => this.emit('walletAdded', w)),
     );
-    if ('configs' in options) this._configs = options.configs;
-  }
-
-  get configs(): unknown extends Configs ? unknown : Configs {
-    return this._wallet?.configs ?? this._configs;
   }
 
   get status(): Status {
