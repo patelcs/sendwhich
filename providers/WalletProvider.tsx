@@ -7,11 +7,9 @@ import {
   MiniKitAdapter,
   type AdapterInterface,
 } from '@/wallet-adapter';
+import { mainnet, sepolia, worldchain, worldchainSepolia } from 'viem/chains';
 
-interface WalletContextValues extends Omit<
-  AdapterInterface,
-  'initialize'
-> { }
+interface WalletContextValues extends Omit<AdapterInterface, 'initialize'> { }
 
 const WalletContext = createContext<WalletContextValues | null>(null);
 
@@ -28,7 +26,7 @@ export function createWalletRegistry() {
   if (miniKitAdapter.isMinikitEnvironment) {
     return new WalletRegistry([miniKitAdapter]);
   }
-  const injectedWalletAdapter = new InjectedWalletAdapter();
+  const injectedWalletAdapter = new InjectedWalletAdapter([mainnet, sepolia, worldchain, worldchainSepolia]);
   return new WalletRegistry([injectedWalletAdapter]);
 }
 
@@ -40,6 +38,7 @@ export default function WalletProvider({
   const [registry] = useState(() => createWalletRegistry());
   const [walletOptions, setWalletOptions] = useState(registry.walletOptions);
   const [status, setStatus] = useState(registry.status);
+  const [supportedChains, setSupportedChains] = useState(registry.supportedChains);
   const [chainId, setChainId] = useState(registry.chainId);
   const [accounts, switchAccounts] = useState(registry.accounts);
   const [activeAccount, setActiveAccount] = useState(registry.activeAccount);
@@ -66,6 +65,7 @@ export default function WalletProvider({
     <WalletContext.Provider
       value={{
         status,
+        supportedChains,
         chainId,
         accounts,
         activeAccount,

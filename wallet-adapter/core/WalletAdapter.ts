@@ -1,3 +1,4 @@
+import { Chain } from 'viem';
 import { EventEmitter } from '../lib';
 import {
   AdapterInterface,
@@ -6,24 +7,33 @@ import {
   Accounts,
   Status,
   ActiveAccount,
-  Account,
-  ChainId,
+  Account
 } from './types';
 
 export abstract class WalletAdapter
   extends EventEmitter<WalletEvents>
   implements AdapterInterface {
   private _status: Status = 'disconnected';
-  private _chainId: ChainId = 0;
+  private _chainId: number = 0;
   private _accounts: Accounts = [];
   private _account: ActiveAccount = null;
   private _walletOptions = new Map<string, WalletOption>();
+  private readonly _supportedChains: Chain[];
+
+  constructor(supportedChains: Chain[]) {
+    super();
+    this._supportedChains = supportedChains;
+  }
 
   get status(): Status {
     return this._status;
   }
 
-  get chainId(): ChainId {
+  get supportedChains(): readonly Chain[] {
+    return this._supportedChains;
+  }
+
+  get chainId(): number {
     return this._chainId;
   }
 
@@ -44,7 +54,7 @@ export abstract class WalletAdapter
     this.emit('statusUpdated', this._status);
   }
 
-  protected updateChainId(chainId: ChainId) {
+  protected updateChainId(chainId: number) {
     this._chainId = chainId;
     this.emit('chainIdUpdated', this._chainId);
   }
@@ -65,7 +75,7 @@ export abstract class WalletAdapter
     this.emit('walletAdded', walletOption);
   }
 
-  protected updateChain(chainId: ChainId) {
+  protected updateChain(chainId: number) {
     this._chainId = chainId;
     this.emit('chainIdUpdated', this.chainId);
   }
@@ -92,5 +102,5 @@ export abstract class WalletAdapter
   abstract connect(walletId: string): Promise<void>;
   abstract disconnect(): Promise<void>;
   abstract switchAccount(account: Account): Promise<void>;
-  abstract switchChain(chainId: ChainId): Promise<void>;
+  abstract switchChain(chainId: number): Promise<void>;
 }

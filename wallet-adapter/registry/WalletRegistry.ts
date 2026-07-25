@@ -7,16 +7,14 @@ import {
   Accounts,
   Account,
   Status,
-  WalletAdapter,
-  ChainId
+  WalletAdapter
 } from '../core';
+import { Chain } from 'viem';
 
 export class WalletRegistry
   extends EventEmitter<WalletEvents>
   implements AdapterInterface {
   private _wallet: WalletAdapter | null = null;
-  ;
-
   constructor(private readonly _adapters: WalletAdapter[]) {
     super();
     if (this._adapters.length === 0)
@@ -31,7 +29,11 @@ export class WalletRegistry
     return this._wallet?.status ?? 'disconnected';
   }
 
-  get chainId(): ChainId {
+  get supportedChains(): readonly Chain[] {
+    return this._wallet?.supportedChains ?? [];
+  }
+
+  get chainId(): number {
     return this._wallet?.chainId ?? 0;
   }
 
@@ -76,7 +78,7 @@ export class WalletRegistry
     this._wallet.switchAccount(account);
   }
 
-  async switchChain(chainId: ChainId): Promise<void> {
+  async switchChain(chainId: number): Promise<void> {
     this._wallet?.switchChain(chainId);
   }
 

@@ -128,7 +128,7 @@ export default function ConnectButton() {
         className={`flex items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 text-sm font-semibold text-blue-500 shadow-sm shadow-blue-500/15 transition-colors hover:border-blue-500/50 hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 px-3 py-2`}
       >
         <Wallet size={16} aria-hidden="true" />
-        {(status === 'disconnected' ? 'Connect Wallet' : 'Connecting…')}
+        {status === 'disconnected' ? 'Connect Wallet' : 'Connecting…'}
       </button>
 
       {isModalOpen &&
@@ -166,7 +166,7 @@ export default function ConnectButton() {
                     className="flex w-full items-center gap-3 rounded-xl border border-(--border) bg-(--background) px-4 py-3 text-left text-sm font-medium text-(--foreground) transition-all hover:border-blue-500/50 hover:bg-blue-500/5"
                   >
                     {walletOption.icon &&
-                      !failedWalletIcons.has(walletOption.id) ? (
+                    !failedWalletIcons.has(walletOption.id) ? (
                       // Wallet providers supply these external icon URLs at runtime.
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

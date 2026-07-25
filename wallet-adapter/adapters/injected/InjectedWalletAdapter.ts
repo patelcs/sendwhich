@@ -1,11 +1,10 @@
-import { WalletAdapter, Accounts, Account, ChainId } from '../../core';
+import { WalletAdapter, Accounts, Account } from '../../core';
 import { EIP6963ProviderDetail, EIP1193Provider } from './types';
 import { createWalletClient, custom, WalletClient } from 'viem';
 import { mainnet } from 'viem/chains';
 
 export class InjectedWalletAdapter extends WalletAdapter {
   private readonly _providers = new Map<string, EIP1193Provider>();
-  private _provider: EIP1193Provider | undefined = undefined;
   private _client: WalletClient | null = null;
 
   async initialize() {
@@ -17,46 +16,43 @@ export class InjectedWalletAdapter extends WalletAdapter {
   }
 
   async connect(walletId: string) {
-    this._provider = this._providers.get(walletId);
-    if (!this._provider) {
+    const provider = this._providers.get(walletId);
+    if (!provider) {
       throw new Error(`Provider with id ${walletId} not found`);
     }
 
-    const accounts: Accounts = await this._provider.request({
-      method: 'eth_requestAccounts',
-    });
-    this.updateAccounts(accounts);
-
     this._client = createWalletClient({
-      account: accounts[0],
       chain: mainnet,
-      transport: custom(this._provider),
+      transport: custom(provider),
     });
-
     this.registerProviderEvents();
+
+    const accounts: Accounts = await this._client.requestAddresses();
+    this.updateAccounts(accounts);
   }
 
   async disconnect() {
-    if (this._provider?.on) {
-      try {
-        await this._provider.request({
-          method: 'wallet_revokePermissions',
-          params: [
-            {
-              eth_accounts: {},
-            },
-          ],
-        });
-      } catch {
-        // Some wallets don't support it.
-      } finally {
-        this._provider.removeListener(
-          'accountsChanged',
-          this.onAccountsChanged,
-        );
-        this._provider.removeListener('chainChanged', this.onChainChanged);
-        this._provider.removeListener('disconnect', this.onDisconnect);
-      }
+    try {
+      await this._client?.transport.request({
+        method: 'wallet_revokePermissions',
+        params: [
+          {
+            eth_accounts: {},
+          },
+        ],
+      });
+    } catch {
+      // Some wallets don't support it.
+    } finally {
+      this._client?.transport.removeListener(
+        'accountsChanged',
+        this.onAccountsChanged,
+      );
+      this._client?.transport.removeListener(
+        'chainChanged',
+        this.onChainChanged,
+      );
+      this._client?.transport.removeListener('disconnect', this.onDisconnect);
     }
     this.resetState();
   }
@@ -65,22 +61,20 @@ export class InjectedWalletAdapter extends WalletAdapter {
     this.updateAccount(account);
   }
 
-  async switchChain(chainId: ChainId): Promise<void> {
-    // TODO: add code to change chain in injected provider
+  async switchChain(chainId: number): Promise<void> {
+    this._client?.switchChain({ id: chainId });
     this.updateChain(chainId);
   }
 
   protected resetState(): void {
     super.resetState();
     this._client = null;
-    this._provider = undefined;
   }
 
   private registerProviderEvents() {
-    if (!this._provider?.on) return;
-    this._provider.on('accountsChanged', this.onAccountsChanged);
-    this._provider.on('chainChanged', this.onChainChanged);
-    this._provider.on('disconnect', this.onDisconnect);
+    this._client?.transport.on('accountsChanged', this.onAccountsChanged);
+    this._client?.transport.on('chainChanged', this.onChainChanged);
+    this._client?.transport.on('disconnect', this.onDisconnect);
   }
 
   private readonly onAnnounceProvider = (

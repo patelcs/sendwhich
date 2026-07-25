@@ -1,8 +1,9 @@
+import { type Chain } from 'viem';
+
 export type Status = 'disconnected' | 'connecting' | 'connected';
 export type Account = `0x${string}`;
 export type ActiveAccount = Account | null;
 export type Accounts = readonly Account[];
-export type ChainId = number;
 
 export interface WalletOption {
   id: string;
@@ -12,7 +13,7 @@ export interface WalletOption {
 
 export interface WalletEvents {
   statusUpdated: Status;
-  chainIdUpdated: ChainId;
+  chainIdUpdated: number;
   accountsUpdated: Accounts;
   accountUpdated: ActiveAccount;
   walletAdded: WalletOption;
@@ -20,7 +21,8 @@ export interface WalletEvents {
 
 export interface AdapterInterface {
   status: Status;
-  chainId: ChainId;
+  supportedChains: readonly Chain[];
+  chainId: number;
   accounts: Accounts;
   activeAccount: ActiveAccount;
   walletOptions: readonly WalletOption[];
@@ -28,5 +30,5 @@ export interface AdapterInterface {
   connect(walletId: string): Promise<void>;
   disconnect(): Promise<void>;
   switchAccount(account: Account): void;
-  switchChain(chainId: ChainId): Promise<void>;
+  switchChain(chainId: number): Promise<void>;
 }

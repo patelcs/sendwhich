@@ -1,16 +1,21 @@
 import { initializeEruda } from '../../lib';
-import { WalletAdapter, Account, ChainId, WalletOption } from '../../core';
+import { WalletAdapter, Account, WalletOption } from '../../core';
 import { MiniKit } from '@worldcoin/minikit-js';
 import type {
   CommandResultByVia,
   MiniKitWalletAuthOptions,
   WalletAuthResult,
 } from '@worldcoin/minikit-js/commands';
+import { worldchain } from 'viem/chains';
 
 export class MiniKitAdapter extends WalletAdapter {
   private _install = MiniKit.install();
 
-  get chainId(): ChainId {
+  constructor() {
+    super([worldchain]);
+  }
+
+  get chainId(): number {
     return 480;
   }
 
@@ -61,7 +66,7 @@ export class MiniKitAdapter extends WalletAdapter {
     throw new Error('Switching account not supported');
   }
 
-  async switchChain(chainId: ChainId): Promise<void> {
+  async switchChain(chainId: number): Promise<void> {
     throw new Error('Switching chain not supported');
   }
 }
