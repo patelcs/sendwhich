@@ -7,13 +7,14 @@ import {
   Accounts,
   Account,
   Status,
-  WalletAdapter
+  WalletAdapter,
 } from '../core';
 import { Chain } from 'viem';
 
 export class WalletRegistry
   extends EventEmitter<WalletEvents>
-  implements AdapterInterface {
+  implements AdapterInterface
+{
   private _wallet: WalletAdapter | null = null;
   constructor(private readonly _adapters: WalletAdapter[]) {
     super();

@@ -7,12 +7,13 @@ import {
   Accounts,
   Status,
   ActiveAccount,
-  Account
+  Account,
 } from './types';
 
 export abstract class WalletAdapter
   extends EventEmitter<WalletEvents>
-  implements AdapterInterface {
+  implements AdapterInterface
+{
   private _status: Status = 'disconnected';
   private _chainId: number = 0;
   private _accounts: Accounts = [];

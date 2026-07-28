@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Moon, MoreHorizontal, Sun, Zap } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
-import ConnectButton from '../../wallet/ConnectButton';
+import AccountMenu from '../../wallet/AccountMenu';
 import { MOBILE_NAV_LINKS, MORE_LINKS, NAV_LINKS } from './config';
 
 export default function Navbar() {
@@ -57,7 +57,7 @@ export default function Navbar() {
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
-            <ConnectButton />
+            <AccountMenu />
           </div>
         </div>
       </nav>

@@ -23,12 +23,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <WalletProvider>
-          <ThemeProvider>
+        <ThemeProvider>
+          <WalletProvider>
             <Navbar />
             {children}
-          </ThemeProvider>
-        </WalletProvider>
+          </WalletProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
