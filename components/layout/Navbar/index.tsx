@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Moon, MoreHorizontal, Sun, Zap } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
 import AccountMenu from '../../wallet/AccountMenu';
+import ChainMenu from '../../wallet/ChainMenu';
 import { MOBILE_NAV_LINKS, MORE_LINKS, NAV_LINKS } from './config';
 
 export default function Navbar() {
@@ -47,7 +48,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex min-w-0 items-center gap-2 sm:gap-3">
             <button
               type="button"
               onClick={toggle}
@@ -57,6 +58,7 @@ export default function Navbar() {
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
+            <ChainMenu />
             <AccountMenu />
           </div>
         </div>
