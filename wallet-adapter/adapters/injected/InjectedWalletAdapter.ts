@@ -6,6 +6,7 @@ import { mainnet } from 'viem/chains';
 export class InjectedWalletAdapter extends WalletAdapter {
   private readonly _providers = new Map<string, EIP1193Provider>();
   private _client: WalletClient | null = null;
+  private _provider: EIP1193Provider | null = null;
 
   async initialize() {
     window.addEventListener(
@@ -20,7 +21,8 @@ export class InjectedWalletAdapter extends WalletAdapter {
     if (!provider) {
       throw new Error(`Provider with id ${walletId} not found`);
     }
-
+    this.updateStatus('connecting');
+    this._provider = provider;
     this._client = createWalletClient({
       chain: mainnet,
       transport: custom(provider),
@@ -44,15 +46,9 @@ export class InjectedWalletAdapter extends WalletAdapter {
     } catch {
       // Some wallets don't support it.
     } finally {
-      this._client?.transport.removeListener(
-        'accountsChanged',
-        this.onAccountsChanged,
-      );
-      this._client?.transport.removeListener(
-        'chainChanged',
-        this.onChainChanged,
-      );
-      this._client?.transport.removeListener('disconnect', this.onDisconnect);
+      this._provider?.removeListener('accountsChanged', this.onAccountsChanged);
+      this._provider?.removeListener('chainChanged', this.onChainChanged);
+      this._provider?.removeListener('disconnect', this.onDisconnect);
     }
     this.resetState();
   }
@@ -69,12 +65,13 @@ export class InjectedWalletAdapter extends WalletAdapter {
   protected resetState(): void {
     super.resetState();
     this._client = null;
+    this._provider = null;
   }
 
   private registerProviderEvents() {
-    this._client?.transport.on('accountsChanged', this.onAccountsChanged);
-    this._client?.transport.on('chainChanged', this.onChainChanged);
-    this._client?.transport.on('disconnect', this.onDisconnect);
+    this._provider?.on('accountsChanged', this.onAccountsChanged);
+    this._provider?.on('chainChanged', this.onChainChanged);
+    this._provider?.on('disconnect', this.onDisconnect);
   }
 
   private readonly onAnnounceProvider = (
