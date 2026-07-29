@@ -8,19 +8,20 @@ import {
   Account,
   Status,
   WalletAdapter,
+  WalletConfigs,
 } from '../core';
 import { Chain } from 'viem';
 
 export class WalletRegistry
   extends EventEmitter<WalletEvents>
-  implements AdapterInterface
-{
+  implements AdapterInterface {
   private _wallet: WalletAdapter | null = null;
   constructor(private readonly _adapters: WalletAdapter[]) {
     super();
     if (this._adapters.length === 0)
       throw new Error('Empty wallet adapter array');
     if (this._adapters.length === 1) this._wallet = this._adapters[0];
+
     this._adapters.forEach((a) =>
       a.on('walletAdded', (w) => this.emit('walletAdded', w)),
     );
@@ -51,18 +52,33 @@ export class WalletRegistry
   }
 
   async initialize() {
-    await Promise.all(this._adapters.map((adapter) => adapter.initialize()));
+    const walletName = WalletConfigs.walletName;
+    await Promise.all(this._adapters.map(async (adapter) => {
+      await adapter.initialize();
+      const walletOption = adapter.walletOptions.find(w => w.name == walletName);
+      if (walletOption) {
+        this._wallet?.removeReEmitter(this);
+        this._wallet = adapter;
+        this._wallet!.addReEmitter(this);
+        await this._wallet!.initialConnect(walletOption.id);
+      }
+    }));
+  }
+
+  async initialConnect(walletId: string): Promise<void> {
+    throw new Error('Useless function i guess');
   }
 
   async connect(walletId: string) {
-    const adapter = this.findAdapter(walletId);
-    if (!adapter) {
+    const found = this.findAdapter(walletId);
+    if (!found) {
       throw new Error(`Wallet with id ${walletId} not found`);
     }
     this._wallet?.removeReEmitter(this);
-    this._wallet = adapter;
+    this._wallet = found.adapter;
     this._wallet!.addReEmitter(this);
     await this._wallet!.connect(walletId);
+    WalletConfigs.walletName = found.walletName;
   }
 
   async disconnect() {
@@ -86,7 +102,7 @@ export class WalletRegistry
   private findAdapter(walletId: string) {
     for (const adapter of this._adapters) {
       for (const walletOption of adapter.walletOptions) {
-        if (walletOption.id === walletId) return adapter;
+        if (walletOption.id === walletId) return { adapter, walletName: walletOption.name };
       }
     }
     return null;

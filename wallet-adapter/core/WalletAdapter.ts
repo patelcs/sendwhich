@@ -9,11 +9,11 @@ import {
   ActiveAccount,
   Account,
 } from './types';
+import { WalletConfigs } from './configs';
 
 export abstract class WalletAdapter
   extends EventEmitter<WalletEvents>
-  implements AdapterInterface
-{
+  implements AdapterInterface {
   private _status: Status = 'disconnected';
   private _chainId: number = 0;
   private _accounts: Accounts = [];
@@ -50,25 +50,22 @@ export abstract class WalletAdapter
     return [...this._walletOptions.values()];
   }
 
+  protected getConnectedOrDefaultChain() {
+    const chainId = WalletConfigs.chainId;
+    return this.supportedChains.find(c => c.id == chainId) ?? this.supportedChains[0];
+  }
+
   protected updateStatus(status: Status) {
     this._status = status;
     this.emit('statusUpdated', this._status);
   }
 
-  protected updateChainId(chainId: number) {
-    this._chainId = chainId;
-    this.emit('chainIdUpdated', this._chainId);
-  }
-
-  protected updateAccounts(accounts: Accounts) {
-    this._account = accounts.length > 0 ? accounts[0] : null;
-    this.emit('accountUpdated', this._account);
-
+  protected updateAccounts(accounts: Accounts, activeAccount?: ActiveAccount) {
     this._accounts = accounts.toSorted();
     this.emit('accountsUpdated', this._accounts);
 
-    this._status = accounts.length > 0 ? 'connected' : 'disconnected';
-    this.emit('statusUpdated', this._status);
+    this.updateAccount(accounts.length > 0 ? (activeAccount ?? accounts[0]) : null);
+    this.updateStatus(accounts.length > 0 ? 'connected' : 'disconnected');
   }
 
   protected addWalletOption(walletOption: WalletOption) {
@@ -77,7 +74,9 @@ export abstract class WalletAdapter
   }
 
   protected updateChain(chainId: number) {
+    if (!this.supportedChains.find(c => c.id == chainId)) throw new Error(`Chain with id ${chainId} is not supported`);
     this._chainId = chainId;
+    WalletConfigs.chainId = chainId;
     this.emit('chainIdUpdated', this.chainId);
   }
 
@@ -86,20 +85,23 @@ export abstract class WalletAdapter
     this.updateAccounts([]);
     this._account = null;
     this.emit('accountUpdated', this._account);
+    WalletConfigs.reset();
   }
 
-  protected updateAccount(account: Account) {
-    if (!this._accounts.includes(account)) {
+  protected updateAccount(account: ActiveAccount) {
+    if (account && !this._accounts.includes(account)) {
       throw new Error(
         `Account ${account} is not in the list of available accounts`,
       );
     }
 
     this._account = account;
+    WalletConfigs.account = account;
     this.emit('accountUpdated', this._account);
   }
 
   abstract initialize(): Promise<void>;
+  abstract initialConnect(walletId: string): Promise<void>;
   abstract connect(walletId: string): Promise<void>;
   abstract disconnect(): Promise<void>;
   abstract switchAccount(account: Account): Promise<void>;

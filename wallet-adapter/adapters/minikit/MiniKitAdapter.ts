@@ -1,5 +1,5 @@
 import { initializeEruda } from '../../lib';
-import { WalletAdapter, Account, WalletOption } from '../../core';
+import { WalletAdapter, Account, WalletOption, WalletConfigs } from '../../core';
 import { MiniKit } from '@worldcoin/minikit-js';
 import type {
   CommandResultByVia,
@@ -41,6 +41,10 @@ export class MiniKitAdapter extends WalletAdapter {
     } catch (error) {
       console.error('initialization error:', error);
     }
+  }
+
+  async initialConnect(walletId: string): Promise<void> {
+    await this.connect(walletId);
   }
 
   async connect(walletId: string) {

@@ -1,4 +1,4 @@
-import { WalletAdapter, Accounts, Account } from '../../core';
+import { WalletAdapter, Accounts, Account, WalletConfigs } from '../../core';
 import { EIP6963ProviderDetail, EIP1193Provider } from './types';
 import { createWalletClient, custom, WalletClient } from 'viem';
 import { mainnet } from 'viem/chains';
@@ -14,6 +14,23 @@ export class InjectedWalletAdapter extends WalletAdapter {
       this.onAnnounceProvider,
     );
     window.dispatchEvent(new Event('eip6963:requestProvider'));
+  }
+
+  async initialConnect(walletId: string): Promise<void> {
+    const provider = this._providers.get(walletId);
+    if (!provider) return;
+    this.updateStatus('connecting');
+    this._provider = provider;
+    const chain = this.getConnectedOrDefaultChain();
+    this.updateChain(chain.id);
+    this._client = createWalletClient({
+      chain,
+      transport: custom(provider),
+    });
+    this.registerProviderEvents();
+
+    const accounts: Accounts = await this._client.getAddresses();
+    this.updateAccounts(accounts, WalletConfigs.account);
   }
 
   async connect(walletId: string) {
@@ -47,7 +64,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
       // Some wallets don't support it.
     } finally {
       this._provider?.removeListener('accountsChanged', this.onAccountsChanged);
-      this._provider?.removeListener('chainChanged', this.onChainChanged);
+      // this._provider?.removeListener('chainChanged', this.onChainChanged);
       this._provider?.removeListener('disconnect', this.onDisconnect);
     }
     this.resetState();
@@ -58,7 +75,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
   }
 
   async switchChain(chainId: number): Promise<void> {
-    this._client?.switchChain({ id: chainId });
+    await this._client?.switchChain({ id: chainId });
     this.updateChain(chainId);
   }
 
@@ -70,7 +87,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
 
   private registerProviderEvents() {
     this._provider?.on('accountsChanged', this.onAccountsChanged);
-    this._provider?.on('chainChanged', this.onChainChanged);
+    // this._provider?.on('chainChanged', this.onChainChanged);
     this._provider?.on('disconnect', this.onDisconnect);
   }
 
@@ -90,9 +107,9 @@ export class InjectedWalletAdapter extends WalletAdapter {
     this.updateAccounts(accounts);
   };
 
-  private readonly onChainChanged = (chainId: string) => {
-    this.updateChain(Number(chainId));
-  };
+  // private readonly onChainChanged = (chainId: string) => {
+  //   this.updateChain(Number(chainId));
+  // };
 
   private readonly onDisconnect = () => {
     this.resetState();

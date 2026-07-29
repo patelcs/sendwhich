@@ -27,6 +27,7 @@ export interface AdapterInterface {
   activeAccount: ActiveAccount;
   walletOptions: readonly WalletOption[];
   initialize(): Promise<void>;
+  initialConnect(walletId: string): Promise<void>;
   connect(walletId: string): Promise<void>;
   disconnect(): Promise<void>;
   switchAccount(account: Account): void;
