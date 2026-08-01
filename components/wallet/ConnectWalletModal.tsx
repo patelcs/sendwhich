@@ -45,7 +45,7 @@ export default function ConnectWalletModal({ isOpen, walletOptions, onClose, onS
               key={walletOption.id}
               type="button"
               onClick={() => onSelect(walletOption.id)}
-              className="flex w-full items-center gap-3 rounded-xl border border-(--border) bg-(--background) px-4 py-3 text-left text-sm font-medium text-(--foreground) transition-all hover:border-blue-500/50 hover:bg-blue-500/5"
+              className="flex w-full items-center gap-3 rounded-xl border border-(--border) bg-(--background) px-4 py-3 text-left text-sm font-medium text-(--foreground) transition-all hover:border-(--brand)/50 hover:bg-(--brand)/5"
             >
               {walletOption.icon && !failedWalletIcons.has(walletOption.id) ? (
                 // Wallet providers supply these external icon URLs at runtime.
@@ -59,7 +59,7 @@ export default function ConnectWalletModal({ isOpen, walletOptions, onClose, onS
                   onError={() => setFailedWalletIcons((failedIcons) => new Set(failedIcons).add(walletOption.id))}
                 />
               ) : (
-                <Wallet size={18} className="text-blue-500" aria-hidden="true" />
+                <Wallet size={18} className="text-(--brand)" aria-hidden="true" />
               )}
               {walletOption.name}
             </button>

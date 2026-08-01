@@ -16,11 +16,13 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={'sticky top-0 z-50 md:border-b md:border-(--border) md:bg-(--card)/80 backdrop-blur-xl'}>
+      <nav className={'sticky top-0 z-50 md:border-b md:border-(--navbar-border) md:bg-(--navbar-background)'}>
         <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold text-(--foreground)">
-            <Zap size={22} className="text-blue-500" />
-            <span className="bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">SendWhich</span>
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold text-(--navbar-foreground)">
+            <Zap size={22} className="text-(--brand)" />
+            <span className="bg-linear-to-r from-(--brand) to-(--brand-secondary) bg-clip-text text-transparent">
+              SendWhich
+            </span>
           </Link>
 
           <div className="ml-8 hidden items-center gap-1 md:flex">
@@ -28,10 +30,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${pathname === link.href
-                    ? 'bg-blue-500/10 text-blue-500'
-                    : 'text-(--muted) hover:bg-(--accent) hover:text-(--foreground)'
-                  }`}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  pathname === link.href
+                    ? 'bg-(--brand)/10 text-(--brand)'
+                    : 'text-(--navbar-muted) hover:bg-(--navbar-accent) hover:text-(--navbar-foreground)'
+                }`}
               >
                 {link.label}
               </Link>
@@ -39,14 +42,16 @@ export default function Navbar() {
           </div>
 
           <div className="ml-auto flex min-w-0 items-center gap-2 sm:gap-3">
+            {/* Theme button temporarily disabled — light theme isn't ready yet.
             <button
               type="button"
               onClick={toggle}
-              className="rounded-lg border border-(--border) p-2 text-(--muted) transition-colors hover:bg-(--accent) hover:text-(--foreground)"
+              className="flex items-center justify-center p-2 text-(--icon-muted) transition-colors hover:text-(--icon-muted-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand)"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
+            */}
 
             <ChainMenu />
             <AccountMenu />
@@ -84,7 +89,7 @@ export default function Navbar() {
                     'flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-(--foreground) transition-colors hover:bg-(--accent)';
                   const contents = (
                     <>
-                      <Icon size={20} className="text-blue-500" aria-hidden="true" />
+                      <Icon size={20} className="text-(--brand)" aria-hidden="true" />
                       {label}
                     </>
                   );
@@ -112,7 +117,7 @@ export default function Navbar() {
         </div>
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-(--border) bg-(--card)/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-(--navbar-border) bg-(--bottom-bar) pb-[env(safe-area-inset-bottom)] md:hidden">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-2">
           {MOBILE_NAV_LINKS.map(({ href, icon: Icon, label }) => {
             const isActive = pathname === href;
@@ -122,8 +127,9 @@ export default function Navbar() {
                 key={href}
                 href={href}
                 aria-current={isActive ? 'page' : undefined}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${isActive ? 'text-blue-500' : 'text-(--muted) hover:text-(--foreground)'
-                  }`}
+                className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${
+                  isActive ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
+                }`}
               >
                 <Icon size={20} aria-hidden="true" />
                 <span className="truncate">{label}</span>
@@ -135,8 +141,9 @@ export default function Navbar() {
             onClick={() => setMoreOpen((open) => !open)}
             aria-expanded={moreOpen}
             aria-controls="mobile-more-menu"
-            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${moreOpen ? 'text-blue-500' : 'text-(--muted) hover:text-(--foreground)'
-              }`}
+            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${
+              moreOpen ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
+            }`}
           >
             <MoreHorizontal size={20} aria-hidden="true" />
             <span>More</span>

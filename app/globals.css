@@ -1,13 +1,38 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #f8fafc;
-  --card: #ffffff;
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --accent: #f1f5f9;
-  --input-bg: #f1f5f9;
+  /* Light theme is temporarily set to match the dark theme 1:1 until the
+     real light theme is designed. The previous light values (now unused)
+     are kept here, commented out, so the light theme can be restored later:
+     --background: #e4e8ee;
+     --card: #f1f4f8;
+     --foreground: #0f172a;
+     --muted: #64748b;
+     --border: #cbd3de;
+     --accent: #dee3ea;
+     --input-bg: #eaeef3;
+  */
+  --background: #0a0e17;
+  --card: #111827;
+  --foreground: #f1f5f9;
+  --muted: #94a3b8;
+  --border: #1e293b;
+  --accent: #1e293b;
+  --input-bg: #1e293b;
+  --brand: #3b82f6;
+  --brand-secondary: #a855f7;
+  --danger: #ef4444;
+
+  /* The navbar and bottom bar are always dark, in both themes, so their
+     colors are defined once here and never overridden. */
+  --navbar-background: #111827;
+  --navbar-foreground: #f1f5f9;
+  --navbar-muted: #94a3b8;
+  --navbar-accent: #1e293b;
+  --navbar-border: #1e293b;
+  --bottom-bar: #111827;
+  --icon-muted: #9ca3af;
+  --icon-muted-hover: #d1d5db;
 }
 
 [data-theme='dark'] {

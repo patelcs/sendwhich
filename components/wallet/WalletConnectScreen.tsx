@@ -6,8 +6,10 @@ export default function WalletConnectScreen() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-8 bg-(--background) px-4 text-center">
       <div className="flex items-center gap-2 text-2xl font-bold">
-        <Zap size={28} className="text-blue-500" aria-hidden="true" />
-        <span className="bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">{APP_NAME}</span>
+        <Zap size={28} className="text-(--brand)" aria-hidden="true" />
+        <span className="bg-linear-to-r from-(--brand) to-(--brand-secondary) bg-clip-text text-transparent">
+          {APP_NAME}
+        </span>
       </div>
 
       <div className="max-w-sm space-y-2">
