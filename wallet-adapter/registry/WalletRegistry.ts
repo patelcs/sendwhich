@@ -12,19 +12,14 @@ import {
 } from '../core';
 import { Chain } from 'viem';
 
-export class WalletRegistry
-  extends EventEmitter<WalletEvents>
-  implements AdapterInterface {
+export class WalletRegistry extends EventEmitter<WalletEvents> implements AdapterInterface {
   private _wallet: WalletAdapter | null = null;
   constructor(private readonly _adapters: WalletAdapter[]) {
     super();
-    if (this._adapters.length === 0)
-      throw new Error('Empty wallet adapter array');
+    if (this._adapters.length === 0) throw new Error('Empty wallet adapter array');
     if (this._adapters.length === 1) this._wallet = this._adapters[0];
 
-    this._adapters.forEach((a) =>
-      a.on('walletAdded', (w) => this.emit('walletAdded', w)),
-    );
+    this._adapters.forEach((a) => a.on('walletAdded', (w) => this.emit('walletAdded', w)));
   }
 
   get status(): Status {
@@ -53,16 +48,18 @@ export class WalletRegistry
 
   async initialize() {
     const walletName = WalletConfigs.walletName;
-    await Promise.all(this._adapters.map(async (adapter) => {
-      await adapter.initialize();
-      const walletOption = adapter.walletOptions.find(w => w.name == walletName);
-      if (walletOption) {
-        this._wallet?.removeReEmitter(this);
-        this._wallet = adapter;
-        this._wallet!.addReEmitter(this);
-        await this._wallet!.initialConnect(walletOption.id);
-      }
-    }));
+    await Promise.all(
+      this._adapters.map(async (adapter) => {
+        await adapter.initialize();
+        const walletOption = adapter.walletOptions.find((w) => w.name == walletName);
+        if (walletOption) {
+          this._wallet?.removeReEmitter(this);
+          this._wallet = adapter;
+          this._wallet!.addReEmitter(this);
+          await this._wallet!.initialConnect(walletOption.id);
+        }
+      }),
+    );
   }
 
   async initialConnect(walletId: string): Promise<void> {

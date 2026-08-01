@@ -1,17 +1,6 @@
-import {
-  ArrowLeftRight,
-  BookOpen,
-  MessageCircle,
-  Send,
-  WalletMinimal,
-  Wrench,
-} from 'lucide-react';
+import { ArrowLeftRight, BookOpen, MessageCircle, Send, WalletMinimal, Wrench } from 'lucide-react';
 import { DISCORD_URL, DOC_URL } from '@/lib/constants';
-import type {
-  MobileNavigationLink,
-  MoreNavigationItem,
-  NavigationLink,
-} from './types';
+import type { MobileNavigationLink, MoreNavigationItem, NavigationLink } from './types';
 
 export const NAV_LINKS: NavigationLink[] = [
   { href: '/', label: 'Portfolio' },

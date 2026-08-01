@@ -1,11 +1,7 @@
 import { initializeEruda } from '../../lib';
 import { WalletAdapter, Account, WalletOption, WalletConfigs } from '../../core';
 import { MiniKit } from '@worldcoin/minikit-js';
-import type {
-  CommandResultByVia,
-  MiniKitWalletAuthOptions,
-  WalletAuthResult,
-} from '@worldcoin/minikit-js/commands';
+import type { CommandResultByVia, MiniKitWalletAuthOptions, WalletAuthResult } from '@worldcoin/minikit-js/commands';
 import { worldchain } from 'viem/chains';
 
 export class MiniKitAdapter extends WalletAdapter {
@@ -34,8 +30,7 @@ export class MiniKitAdapter extends WalletAdapter {
   }
 
   async initialize() {
-    if (!this.isMinikitEnvironment)
-      throw new Error('Not in MiniApp Environment');
+    if (!this.isMinikitEnvironment) throw new Error('Not in MiniApp Environment');
     try {
       await initializeEruda();
     } catch (error) {
@@ -52,8 +47,7 @@ export class MiniKitAdapter extends WalletAdapter {
       nonce: 'randomnonce123456',
     } satisfies MiniKitWalletAuthOptions;
     try {
-      const result: CommandResultByVia<WalletAuthResult> =
-        await MiniKit.walletAuth(input);
+      const result: CommandResultByVia<WalletAuthResult> = await MiniKit.walletAuth(input);
       const account = result.data.address as Account;
       this.updateAccounts([account]);
     } catch (error) {

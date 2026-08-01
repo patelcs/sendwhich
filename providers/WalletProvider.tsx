@@ -1,17 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import {
-  WalletRegistry,
-  InjectedWalletAdapter,
-  MiniKitAdapter,
-  type AdapterInterface,
-} from '@/wallet-adapter';
+import { WalletRegistry, InjectedWalletAdapter, MiniKitAdapter, type AdapterInterface } from '@/wallet-adapter';
 import { mainnet, sepolia, worldchain, worldchainSepolia } from 'viem/chains';
 import WalletLoadingScreen from '@/components/wallet/WalletLoadingScreen';
 import WalletConnectScreen from '@/components/wallet/WalletConnectScreen';
 
-interface WalletContextValues extends Omit<Omit<AdapterInterface, 'initialize'>, 'initialConnect'> { }
+interface WalletContextValues extends Omit<Omit<AdapterInterface, 'initialize'>, 'initialConnect'> {}
 
 const WalletContext = createContext<WalletContextValues | null>(null);
 
@@ -28,20 +23,11 @@ export function createWalletRegistry() {
   if (miniKitAdapter.isMinikitEnvironment) {
     return new WalletRegistry([miniKitAdapter]);
   }
-  const injectedWalletAdapter = new InjectedWalletAdapter([
-    mainnet,
-    sepolia,
-    worldchain,
-    worldchainSepolia,
-  ]);
+  const injectedWalletAdapter = new InjectedWalletAdapter([mainnet, sepolia, worldchain, worldchainSepolia]);
   return new WalletRegistry([injectedWalletAdapter]);
 }
 
-export default function WalletProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function WalletProvider({ children }: { children: React.ReactNode }) {
   const [registry] = useState(() => createWalletRegistry());
   const [walletOptions, setWalletOptions] = useState(registry.walletOptions);
   const [status, setStatus] = useState(registry.status);
@@ -52,9 +38,7 @@ export default function WalletProvider({
 
   useEffect(() => {
     const unSubscribers = [
-      registry.on('walletAdded', () =>
-        setWalletOptions(registry.walletOptions),
-      ),
+      registry.on('walletAdded', () => setWalletOptions(registry.walletOptions)),
       registry.on('statusUpdated', setStatus),
       registry.on('chainIdUpdated', setChainId),
       registry.on('accountsUpdated', switchAccounts),

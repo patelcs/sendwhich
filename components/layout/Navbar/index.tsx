@@ -16,20 +16,11 @@ export default function Navbar() {
 
   return (
     <>
-      <nav
-        className={
-          'sticky top-0 z-50 md:border-b md:border-(--border) md:bg-(--card)/80 backdrop-blur-xl'
-        }
-      >
+      <nav className={'sticky top-0 z-50 md:border-b md:border-(--border) md:bg-(--card)/80 backdrop-blur-xl'}>
         <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <Link
-            href="/"
-            className="items-center gap-2 text-lg font-bold text-(--foreground) hidden md:flex"
-          >
+          <Link href="/" className="items-center gap-2 text-lg font-bold text-(--foreground) hidden md:flex">
             <Zap size={22} className="text-blue-500" />
-            <span className="bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-              SendWhich
-            </span>
+            <span className="bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">SendWhich</span>
           </Link>
 
           <div className="ml-8 hidden items-center gap-1 md:flex">
@@ -84,11 +75,7 @@ export default function Navbar() {
                 {MORE_LINKS.map((item, index) => {
                   if (item.type === 'separator') {
                     return (
-                      <div
-                        key={`separator-${index}`}
-                        role="separator"
-                        className="my-2 border-t border-(--border)"
-                      />
+                      <div key={`separator-${index}`} role="separator" className="my-2 border-t border-(--border)" />
                     );
                   }
 
@@ -98,11 +85,7 @@ export default function Navbar() {
                     'flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-(--foreground) transition-colors hover:bg-(--accent)';
                   const contents = (
                     <>
-                      <Icon
-                        size={20}
-                        className="text-blue-500"
-                        aria-hidden="true"
-                      />
+                      <Icon size={20} className="text-blue-500" aria-hidden="true" />
                       {label}
                     </>
                   );
@@ -119,12 +102,7 @@ export default function Navbar() {
                       {contents}
                     </a>
                   ) : (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setMoreOpen(false)}
-                      className={className}
-                    >
+                    <Link key={href} href={href} onClick={() => setMoreOpen(false)} className={className}>
                       {contents}
                     </Link>
                   );
@@ -146,9 +124,7 @@ export default function Navbar() {
                 href={href}
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-                  isActive
-                    ? 'text-blue-500'
-                    : 'text-(--muted) hover:text-(--foreground)'
+                  isActive ? 'text-blue-500' : 'text-(--muted) hover:text-(--foreground)'
                 }`}
               >
                 <Icon size={20} aria-hidden="true" />
@@ -162,9 +138,7 @@ export default function Navbar() {
             aria-expanded={moreOpen}
             aria-controls="mobile-more-menu"
             className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-              moreOpen
-                ? 'text-blue-500'
-                : 'text-(--muted) hover:text-(--foreground)'
+              moreOpen ? 'text-blue-500' : 'text-(--muted) hover:text-(--foreground)'
             }`}
           >
             <MoreHorizontal size={20} aria-hidden="true" />

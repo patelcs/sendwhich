@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  ThemeProvider as NextThemesProvider,
-  useTheme as useNextTheme,
-} from 'next-themes';
+import { ThemeProvider as NextThemesProvider, useTheme as useNextTheme } from 'next-themes';
 import { createContext, useContext } from 'react';
 
 type Theme = 'dark' | 'light';
@@ -43,18 +40,9 @@ function ThemeContextProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function ThemeProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
-    <NextThemesProvider
-      attribute="data-theme"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
+    <NextThemesProvider attribute="data-theme" defaultTheme="system" enableSystem disableTransitionOnChange>
       <ThemeContextProvider>{children}</ThemeContextProvider>
     </NextThemesProvider>
   );

@@ -1,7 +1,6 @@
 /** App metadata */
 export const APP_NAME = 'SendWhich';
-export const APP_DESCRIPTION =
-  'Crypto utility tools. Gas-efficient, secure, and open-source.';
+export const APP_DESCRIPTION = 'Crypto utility tools. Gas-efficient, secure, and open-source.';
 export const APP_URL = 'https://sendwhich.patelcs.in';
 export const DOC_URL = 'https://docs.sendwhich.patelcs.in';
 

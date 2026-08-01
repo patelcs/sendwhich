@@ -29,8 +29,6 @@ export default function ChainMenu() {
     setIsOpen(false);
   };
 
-  if (supportedChains.length <= 1) return null;
-
   const activeChainName = activeChain?.name ?? `Chain ${chainId}`;
 
   return (
@@ -45,9 +43,7 @@ export default function ChainMenu() {
         className="flex items-center justify-center gap-2 rounded-lg border border-(--border) bg-(--accent) px-2.5 py-2 text-sm font-semibold text-(--foreground) shadow-sm transition-colors hover:bg-(--border) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 sm:px-3"
       >
         <Waypoints size={16} className="shrink-0 text-blue-500" aria-hidden="true" />
-        <span className="hidden max-w-28 truncate sm:inline">
-          {activeChainName}
-        </span>
+        <span className="hidden max-w-28 truncate sm:inline">{activeChainName}</span>
         <ChevronDown
           size={16}
           className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -62,9 +58,7 @@ export default function ChainMenu() {
           aria-label="Switch network"
           className="absolute right-0 z-50 mt-2 w-56 rounded-xl border border-(--border) bg-(--card) p-2 shadow-2xl"
         >
-          <p className="px-2 py-1.5 text-xs font-semibold tracking-wide text-(--muted) uppercase">
-            Networks
-          </p>
+          <p className="px-2 py-1.5 text-xs font-semibold tracking-wide text-(--muted) uppercase">Networks</p>
 
           <div className="space-y-0.5">
             {supportedChains.map((chain) => {
@@ -77,22 +71,14 @@ export default function ChainMenu() {
                   onClick={() => handleSelect(chain.id)}
                   aria-current={isSelected}
                   className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${
-                    isSelected
-                      ? 'bg-blue-500/10 text-blue-500'
-                      : 'text-(--foreground) hover:bg-(--accent)'
+                    isSelected ? 'bg-blue-500/10 text-blue-500' : 'text-(--foreground) hover:bg-(--accent)'
                   }`}
                 >
                   <span className="flex min-w-0 items-center gap-2">
                     <Waypoints size={14} className="shrink-0" aria-hidden="true" />
                     <span className="truncate">{chain.name}</span>
                   </span>
-                  {isSelected && (
-                    <Check
-                      size={16}
-                      className="shrink-0"
-                      aria-label="Active network"
-                    />
-                  )}
+                  {isSelected && <Check size={16} className="shrink-0" aria-label="Active network" />}
                 </button>
               );
             })}

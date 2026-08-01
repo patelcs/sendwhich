@@ -8,10 +8,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
   private _provider: EIP1193Provider | null = null;
 
   async initialize() {
-    window.addEventListener(
-      'eip6963:announceProvider',
-      this.onAnnounceProvider,
-    );
+    window.addEventListener('eip6963:announceProvider', this.onAnnounceProvider);
     window.dispatchEvent(new Event('eip6963:requestProvider'));
   }
 
@@ -49,7 +46,10 @@ export class InjectedWalletAdapter extends WalletAdapter {
         await this.disconnect();
         console.debug('Disconnected after failed initial connect to fallback connected chain');
       } catch (failedDisconnectError) {
-        console.debug('Failed to disconnect after failed initial connect to fallback connected chain:', failedDisconnectError);
+        console.debug(
+          'Failed to disconnect after failed initial connect to fallback connected chain:',
+          failedDisconnectError,
+        );
         this.updateAccounts([]);
       }
       return; // Return early to avoid further processing
@@ -120,8 +120,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
         } catch (addError) {
           throw addError;
         }
-      }
-      else throw error;
+      } else throw error;
     }
     this._client = createWalletClient({
       chain,
@@ -149,9 +148,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
     this._provider.on('disconnect', this.onDisconnect);
   }
 
-  private readonly onAnnounceProvider = (
-    event: CustomEvent<EIP6963ProviderDetail>,
-  ) => {
+  private readonly onAnnounceProvider = (event: CustomEvent<EIP6963ProviderDetail>) => {
     const { info, provider } = event.detail;
     this._providers.set(info.uuid, provider);
     this.addWalletOption({

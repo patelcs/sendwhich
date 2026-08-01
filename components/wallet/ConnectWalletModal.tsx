@@ -12,15 +12,8 @@ interface ConnectWalletModalProps {
   onSelect: (walletId: string) => void;
 }
 
-export default function ConnectWalletModal({
-  isOpen,
-  walletOptions,
-  onClose,
-  onSelect,
-}: ConnectWalletModalProps) {
-  const [failedWalletIcons, setFailedWalletIcons] = useState<Set<string>>(
-    new Set(),
-  );
+export default function ConnectWalletModal({ isOpen, walletOptions, onClose, onSelect }: ConnectWalletModalProps) {
+  const [failedWalletIcons, setFailedWalletIcons] = useState<Set<string>>(new Set());
 
   if (!isOpen) return null;
 
@@ -33,10 +26,7 @@ export default function ConnectWalletModal({
         className="w-full max-w-sm rounded-2xl border border-(--border) bg-(--card) p-6 shadow-2xl"
       >
         <div className="mb-6 flex items-center justify-between">
-          <h2
-            id="connect-wallet-title"
-            className="text-lg font-bold text-(--foreground)"
-          >
+          <h2 id="connect-wallet-title" className="text-lg font-bold text-(--foreground)">
             Connect Wallet
           </h2>
           <button
@@ -66,33 +56,19 @@ export default function ConnectWalletModal({
                   width={18}
                   height={18}
                   className="size-4.5 shrink-0 rounded-sm"
-                  onError={() =>
-                    setFailedWalletIcons((failedIcons) =>
-                      new Set(failedIcons).add(walletOption.id),
-                    )
-                  }
+                  onError={() => setFailedWalletIcons((failedIcons) => new Set(failedIcons).add(walletOption.id))}
                 />
               ) : (
-                <Wallet
-                  size={18}
-                  className="text-blue-500"
-                  aria-hidden="true"
-                />
+                <Wallet size={18} className="text-blue-500" aria-hidden="true" />
               )}
               {walletOption.name}
             </button>
           ))}
         </div>
 
-        {walletOptions.length === 0 && (
-          <p className="text-center text-sm text-(--muted)">
-            No wallets are available.
-          </p>
-        )}
+        {walletOptions.length === 0 && <p className="text-center text-sm text-(--muted)">No wallets are available.</p>}
 
-        <p className="mt-4 text-center text-xs text-(--muted)">
-          By connecting, you agree to the terms of service.
-        </p>
+        <p className="mt-4 text-center text-xs text-(--muted)">By connecting, you agree to the terms of service.</p>
       </div>
     </div>,
     document.body,

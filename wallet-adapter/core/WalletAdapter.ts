@@ -1,20 +1,10 @@
 import { Chain } from 'viem';
 import { EventEmitter } from '../lib';
-import {
-  AdapterInterface,
-  WalletEvents,
-  WalletOption,
-  Accounts,
-  Status,
-  ActiveAccount,
-  Account,
-} from './types';
+import { AdapterInterface, WalletEvents, WalletOption, Accounts, Status, ActiveAccount, Account } from './types';
 import { WalletConfigs } from './configs';
-import { getAddress } from "viem";
+import { getAddress } from 'viem';
 
-export abstract class WalletAdapter
-  extends EventEmitter<WalletEvents>
-  implements AdapterInterface {
+export abstract class WalletAdapter extends EventEmitter<WalletEvents> implements AdapterInterface {
   private _status: Status = 'disconnected';
   private _chainId: number = 0;
   private _accounts: Accounts = [];
@@ -52,7 +42,7 @@ export abstract class WalletAdapter
   }
 
   protected getChainById(chainId: number) {
-    return this.supportedChains.find(c => c.id == chainId);
+    return this.supportedChains.find((c) => c.id == chainId);
   }
 
   protected updateStatus(status: Status) {
@@ -61,7 +51,7 @@ export abstract class WalletAdapter
   }
 
   protected updateAccounts(accounts: Accounts, activeAccount?: ActiveAccount) {
-    this._accounts = accounts.map(a => getAddress(a)).toSorted();
+    this._accounts = accounts.map((a) => getAddress(a)).toSorted();
     this.emit('accountsUpdated', this._accounts);
 
     this.updateAccount(accounts.length > 0 ? (activeAccount ?? getAddress(accounts[0])) : null);
@@ -90,9 +80,7 @@ export abstract class WalletAdapter
 
   protected updateAccount(account: ActiveAccount) {
     if (account && !this._accounts.includes(account)) {
-      throw new Error(
-        `Account ${account} is not in the list of available accounts`,
-      );
+      throw new Error(`Account ${account} is not in the list of available accounts`);
     }
 
     this._account = account;

@@ -1,5 +1,5 @@
-import { LocalStorage } from "../lib";
-import { Account, ActiveAccount } from "./types";
+import { LocalStorage } from '../lib';
+import { Account, ActiveAccount } from './types';
 
 export interface Configs {
   walletName?: string;
@@ -8,10 +8,10 @@ export interface Configs {
 }
 
 export class WalletConfigs {
-  static WALLET_CONFIG_STORAGE_KEY = 'wallet-configs'
+  static WALLET_CONFIG_STORAGE_KEY = 'wallet-configs';
   static get() {
     const configs = LocalStorage.load<Configs>(this.WALLET_CONFIG_STORAGE_KEY);
-    if (!configs) return { account: null, chainId: 0 }
+    if (!configs) return { account: null, chainId: 0 };
     return configs;
   }
   static set(configs: Configs) {
