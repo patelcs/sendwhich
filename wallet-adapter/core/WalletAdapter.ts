@@ -10,6 +10,7 @@ import {
   Account,
 } from './types';
 import { WalletConfigs } from './configs';
+import { getAddress } from "viem";
 
 export abstract class WalletAdapter
   extends EventEmitter<WalletEvents>
@@ -50,9 +51,8 @@ export abstract class WalletAdapter
     return [...this._walletOptions.values()];
   }
 
-  protected getConnectedOrDefaultChain() {
-    const chainId = WalletConfigs.chainId;
-    return this.supportedChains.find(c => c.id == chainId) ?? this.supportedChains[0];
+  protected getChainById(chainId: number) {
+    return this.supportedChains.find(c => c.id == chainId);
   }
 
   protected updateStatus(status: Status) {
@@ -61,10 +61,10 @@ export abstract class WalletAdapter
   }
 
   protected updateAccounts(accounts: Accounts, activeAccount?: ActiveAccount) {
-    this._accounts = accounts.toSorted();
+    this._accounts = accounts.map(a => getAddress(a)).toSorted();
     this.emit('accountsUpdated', this._accounts);
 
-    this.updateAccount(accounts.length > 0 ? (activeAccount ?? accounts[0]) : null);
+    this.updateAccount(accounts.length > 0 ? (activeAccount ?? getAddress(accounts[0])) : null);
     this.updateStatus(accounts.length > 0 ? 'connected' : 'disconnected');
   }
 
@@ -74,7 +74,7 @@ export abstract class WalletAdapter
   }
 
   protected updateChain(chainId: number) {
-    if (!this.supportedChains.find(c => c.id == chainId)) throw new Error(`Chain with id ${chainId} is not supported`);
+    if (!this.getChainById(chainId)) throw new Error(`Chain with id ${chainId} is not supported`);
     this._chainId = chainId;
     WalletConfigs.chainId = chainId;
     this.emit('chainIdUpdated', this.chainId);

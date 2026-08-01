@@ -11,7 +11,7 @@ import { mainnet, sepolia, worldchain, worldchainSepolia } from 'viem/chains';
 import WalletLoadingScreen from '@/components/wallet/WalletLoadingScreen';
 import WalletConnectScreen from '@/components/wallet/WalletConnectScreen';
 
-interface WalletContextValues extends Omit<AdapterInterface, 'initialize'> {}
+interface WalletContextValues extends Omit<Omit<AdapterInterface, 'initialize'>, 'initialConnect'> { }
 
 const WalletContext = createContext<WalletContextValues | null>(null);
 
@@ -45,9 +45,6 @@ export default function WalletProvider({
   const [registry] = useState(() => createWalletRegistry());
   const [walletOptions, setWalletOptions] = useState(registry.walletOptions);
   const [status, setStatus] = useState(registry.status);
-  const [supportedChains, setSupportedChains] = useState(
-    registry.supportedChains,
-  );
   const [chainId, setChainId] = useState(registry.chainId);
   const [accounts, switchAccounts] = useState(registry.accounts);
   const [activeAccount, setActiveAccount] = useState(registry.activeAccount);
@@ -77,7 +74,7 @@ export default function WalletProvider({
     <WalletContext.Provider
       value={{
         status,
-        supportedChains,
+        supportedChains: registry.supportedChains,
         chainId,
         accounts,
         activeAccount,
