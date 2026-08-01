@@ -18,7 +18,7 @@ export default function Navbar() {
     <>
       <nav className={'sticky top-0 z-50 md:border-b md:border-(--border) md:bg-(--card)/80 backdrop-blur-xl'}>
         <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="items-center gap-2 text-lg font-bold text-(--foreground) hidden md:flex">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold text-(--foreground)">
             <Zap size={22} className="text-blue-500" />
             <span className="bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">SendWhich</span>
           </Link>
@@ -28,11 +28,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  pathname === link.href
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${pathname === link.href
                     ? 'bg-blue-500/10 text-blue-500'
                     : 'text-(--muted) hover:bg-(--accent) hover:text-(--foreground)'
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
@@ -123,9 +122,8 @@ export default function Navbar() {
                 key={href}
                 href={href}
                 aria-current={isActive ? 'page' : undefined}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-                  isActive ? 'text-blue-500' : 'text-(--muted) hover:text-(--foreground)'
-                }`}
+                className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${isActive ? 'text-blue-500' : 'text-(--muted) hover:text-(--foreground)'
+                  }`}
               >
                 <Icon size={20} aria-hidden="true" />
                 <span className="truncate">{label}</span>
@@ -137,9 +135,8 @@ export default function Navbar() {
             onClick={() => setMoreOpen((open) => !open)}
             aria-expanded={moreOpen}
             aria-controls="mobile-more-menu"
-            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-              moreOpen ? 'text-blue-500' : 'text-(--muted) hover:text-(--foreground)'
-            }`}
+            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${moreOpen ? 'text-blue-500' : 'text-(--muted) hover:text-(--foreground)'
+              }`}
           >
             <MoreHorizontal size={20} aria-hidden="true" />
             <span>More</span>
