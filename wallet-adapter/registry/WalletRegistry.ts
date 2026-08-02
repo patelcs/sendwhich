@@ -14,7 +14,6 @@ import { Chain } from 'viem';
 
 export class WalletRegistry extends EventEmitter<RegistryEvents> implements RegistryInterface {
   private readonly _adapters = new Map<string, WalletAdapter>();
-  private _adapterOptions = new Map<string, AdapterOption>();
   private readonly _adapterOptionOwners = new Map<string, string>();
   private _adapter: WalletAdapter | null = null;
   private _adapterSubscriptions: (() => void)[] = [];
@@ -31,10 +30,6 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
 
     adapters.forEach((adapter) => {
       if (this._adapters.get(adapter.id)) {
-        for (const adapterOption of adapter.adapterOptions) {
-          this._adapterOptions.delete(adapterOption.id);
-          this._adapterOptionOwners.delete(adapterOption.id);
-        }
         const unSubscribeOld = this._adapterOptionSubscriptions.get(adapter.id);
         if (unSubscribeOld) unSubscribeOld();
       }
@@ -67,7 +62,7 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
   }
 
   get adapterOptions(): readonly AdapterOption[] {
-    return Array.from(this._adapterOptions.values());
+    return [...this._adapters.values().flatMap((a) => a.adapterOptions)];
   }
 
   get activeAdapter(): AdapterInterface | null {
@@ -116,7 +111,6 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
   }
 
   private addAdapterOption(adapterId: string, adapterOption: AdapterOption) {
-    this._adapterOptions.set(adapterOption.id, adapterOption);
     this._adapterOptionOwners.set(adapterOption.id, adapterId);
     this.emit('adapterOptionAdded', adapterOption);
     this.emit('adapterOptionsUpdated', this.adapterOptions);

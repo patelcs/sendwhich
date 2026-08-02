@@ -6,14 +6,14 @@ import { useState } from 'react';
 import { Moon, MoreHorizontal, Sun, Zap } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useWallet } from '@/providers/WalletProvider';
-import AccountMenu from '../../wallet/AccountMenu';
-import ChainMenu from '../../wallet/ChainMenu';
-import { MOBILE_NAV_LINKS, MORE_LINKS, NAV_LINKS } from './config';
+import AccountMenu from '../wallet/AccountMenu';
+import ChainMenu from '../wallet/ChainMenu';
+import { MOBILE_NAV_LINKS, MORE_LINKS, NAV_LINKS } from '@/configs';
 
 export default function Navbar() {
   const [moreOpen, setMoreOpen] = useState(false);
   const { theme, toggle } = useTheme();
-  const { status, isInitializing } = useWallet();
+  const { status, isInitializing, adapterConfigs } = useWallet();
   const pathname = usePathname();
   const isConnected = !isInitializing && status === 'connected';
 
@@ -21,12 +21,14 @@ export default function Navbar() {
     <>
       <nav className={'sticky top-0 z-50 md:border-b md:border-(--navbar-border) md:bg-(--navbar-background)'}>
         <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold text-(--navbar-foreground)">
-            <Zap size={22} className="text-(--brand)" />
-            <span className="bg-linear-to-r from-(--brand) to-(--brand-secondary) bg-clip-text text-transparent">
-              SendWhich
-            </span>
-          </Link>
+          {adapterConfigs.showBrandInTopNavbar && (
+            <Link href="/" className="flex items-center gap-2 text-lg font-bold text-(--navbar-foreground)">
+              <Zap size={22} className="text-(--brand)" />
+              <span className="bg-linear-to-r from-(--brand) to-(--brand-secondary) bg-clip-text text-transparent">
+                SendWhich
+              </span>
+            </Link>
+          )}
 
           <div className="ml-8 hidden items-center gap-1 md:flex">
             {NAV_LINKS.map((link) => (

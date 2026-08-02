@@ -1,6 +1,15 @@
 import { Chain } from 'viem';
 import { EventEmitter } from '../lib';
-import { AdapterInterface, AdapterEvents, AdapterOption, Accounts, Status, ActiveAccount, Account } from './types';
+import {
+  AdapterInterface,
+  AdapterEvents,
+  AdapterOption,
+  Accounts,
+  Status,
+  ActiveAccount,
+  Account,
+  AdapterId,
+} from './types';
 import { WalletConfigs } from './configs';
 import { getAddress } from 'viem';
 
@@ -88,7 +97,7 @@ export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implemen
     this.emit('accountUpdated', this._account);
   }
 
-  abstract id: string;
+  abstract id: AdapterId;
   abstract name: string;
   abstract initialize(): Promise<void>;
   abstract initialConnect(adapterOptionId: string): Promise<void>;

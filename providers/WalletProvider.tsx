@@ -1,11 +1,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { WalletRegistry, InjectedWalletAdapter, MiniKitAdapter, type RegistryInterface } from '@/wallet-adapter';
-import { mainnet, sepolia, worldchain, worldchainSepolia } from 'viem/chains';
+import { type RegistryInterface } from '@/wallet-adapter';
+import { AdapterConfigs, createWalletRegistry } from '@/configs';
+import { getAdapterConfigs } from '@/configs/registry/getAdapterConfigs';
 
 interface WalletContextValues extends Omit<RegistryInterface, 'initialize' | 'activeAdapter'> {
   isInitializing: boolean;
+  adapterConfigs: AdapterConfigs;
 }
 
 const WalletContext = createContext<WalletContextValues | null>(null);
@@ -18,17 +20,9 @@ export const useWallet = () => {
   return wallet;
 };
 
-export function createWalletRegistry() {
-  const miniKitAdapter = new MiniKitAdapter();
-  if (miniKitAdapter.isMinikitEnvironment) {
-    return new WalletRegistry([miniKitAdapter]);
-  }
-  const injectedWalletAdapter = new InjectedWalletAdapter([mainnet, sepolia, worldchain, worldchainSepolia]);
-  return new WalletRegistry([injectedWalletAdapter]);
-}
-
 export default function WalletProvider({ children }: { children: React.ReactNode }) {
-  const [registry] = useState(() => createWalletRegistry());
+  const [{ registry, defaultAdapterConfigs }] = useState(() => createWalletRegistry());
+  const [adapterConfigs, setAdapterConfigs] = useState(defaultAdapterConfigs);
   const [adapterOptions, setAdapterOptions] = useState(registry.adapterOptions);
   const [status, setStatus] = useState(registry.status);
   const [chainId, setChainId] = useState(registry.chainId);
@@ -43,6 +37,13 @@ export default function WalletProvider({ children }: { children: React.ReactNode
       registry.on('chainIdUpdated', setChainId),
       registry.on('accountsUpdated', switchAccounts),
       registry.on('accountUpdated', setActiveAccount),
+      registry.on('adapterUpdated', (adapter) => {
+        if (!adapter) {
+          setAdapterConfigs(defaultAdapterConfigs);
+          return;
+        }
+        setAdapterConfigs(getAdapterConfigs(adapter.id));
+      }),
     ];
 
     registry.initialize().finally(() => setIsInitializing(false));
@@ -55,6 +56,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
   return (
     <WalletContext.Provider
       value={{
+        adapterConfigs,
         status,
         isInitializing,
         supportedChains: registry.supportedChains,

@@ -1,4 +1,4 @@
-import { WalletAdapter, Accounts, Account, WalletConfigs } from '../../core';
+import { WalletAdapter, Accounts, Account, WalletConfigs, AdapterId } from '../../core';
 import { EIP6963ProviderDetail, EIP1193Provider } from './types';
 import { createWalletClient, custom, WalletClient } from 'viem';
 
@@ -7,7 +7,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
   private _client: WalletClient | null = null;
   private _provider: EIP1193Provider | null = null;
 
-  get id(): string {
+  get id(): AdapterId {
     return 'injected-wallet-adapter';
   }
 

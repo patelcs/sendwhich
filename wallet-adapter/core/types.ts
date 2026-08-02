@@ -5,6 +5,8 @@ export type Account = `0x${string}`;
 export type ActiveAccount = Account | null;
 export type Accounts = readonly Account[];
 
+export type AdapterId = 'injected-wallet-adapter' | 'minikit-wallet-adapter';
+
 export interface AdapterOption {
   id: string;
   name: string;
@@ -20,7 +22,7 @@ export interface AdapterEvents {
 }
 
 export interface AdapterInterface {
-  id: string;
+  id: AdapterId;
   name: string;
   status: Status;
   supportedChains: readonly Chain[];

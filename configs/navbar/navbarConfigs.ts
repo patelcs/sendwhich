@@ -8,13 +8,13 @@ export const NAV_LINKS: NavigationLink[] = [
   { href: '/swap', label: 'Swap' },
   { href: '/tools', label: 'Tools' },
   { href: DOC_URL, label: 'Docs' },
-];
+] as const;
 
 export const MOBILE_NAV_LINKS: MobileNavigationLink[] = [
   { href: '/', label: 'Portfolio', icon: WalletMinimal },
   { href: '/send', label: 'Send', icon: Send },
   { href: '/swap', label: 'Swap', icon: ArrowLeftRight },
-];
+] as const;
 
 export const MORE_LINKS: MoreNavigationItem[] = [
   { type: 'link', href: '/tools', label: 'Tools', icon: Wrench },
@@ -26,4 +26,4 @@ export const MORE_LINKS: MoreNavigationItem[] = [
     label: 'Discord community',
     icon: MessageCircle,
   },
-];
+] as const;
