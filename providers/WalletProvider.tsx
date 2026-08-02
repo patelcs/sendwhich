@@ -3,10 +3,10 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { WalletRegistry, InjectedWalletAdapter, MiniKitAdapter, type RegistryInterface } from '@/wallet-adapter';
 import { mainnet, sepolia, worldchain, worldchainSepolia } from 'viem/chains';
-import WalletLoadingScreen from '@/components/wallet/WalletLoadingScreen';
-import WalletConnectScreen from '@/components/wallet/WalletConnectScreen';
 
-interface WalletContextValues extends Omit<RegistryInterface, 'initialize' | 'activeAdapter'> {}
+interface WalletContextValues extends Omit<RegistryInterface, 'initialize' | 'activeAdapter'> {
+  isInitializing: boolean;
+}
 
 const WalletContext = createContext<WalletContextValues | null>(null);
 
@@ -52,12 +52,11 @@ export default function WalletProvider({ children }: { children: React.ReactNode
     };
   }, [registry]);
 
-  if (isInitializing) return <WalletLoadingScreen />;
-
   return (
     <WalletContext.Provider
       value={{
         status,
+        isInitializing,
         supportedChains: registry.supportedChains,
         chainId,
         accounts,
@@ -69,7 +68,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
         switchChain: registry.switchChain.bind(registry),
       }}
     >
-      {status === 'connected' ? children : <WalletConnectScreen />}
+      {children}
     </WalletContext.Provider>
   );
 }

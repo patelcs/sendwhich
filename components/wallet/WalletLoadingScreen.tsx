@@ -3,7 +3,7 @@ export default function WalletLoadingScreen() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed inset-0 z-100 flex flex-col items-center justify-center gap-4 bg-(--background)"
+      className="flex flex-1 flex-col items-center justify-center gap-4 bg-(--background)"
     >
       <div className="flex items-center gap-2">
         <span className="size-3 animate-bounce rounded-full bg-(--brand) [animation-delay:-0.3s]" />

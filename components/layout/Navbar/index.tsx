@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Moon, MoreHorizontal, Sun, Zap } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
+import { useWallet } from '@/providers/WalletProvider';
 import AccountMenu from '../../wallet/AccountMenu';
 import ChainMenu from '../../wallet/ChainMenu';
 import { MOBILE_NAV_LINKS, MORE_LINKS, NAV_LINKS } from './config';
@@ -12,7 +13,9 @@ import { MOBILE_NAV_LINKS, MORE_LINKS, NAV_LINKS } from './config';
 export default function Navbar() {
   const [moreOpen, setMoreOpen] = useState(false);
   const { theme, toggle } = useTheme();
+  const { status, isInitializing } = useWallet();
   const pathname = usePathname();
+  const isConnected = !isInitializing && status === 'connected';
 
   return (
     <>
@@ -53,8 +56,12 @@ export default function Navbar() {
             </button>
             */}
 
-            <ChainMenu />
-            <AccountMenu />
+            {isConnected && (
+              <>
+                <ChainMenu />
+                <AccountMenu />
+              </>
+            )}
           </div>
         </div>
       </nav>
