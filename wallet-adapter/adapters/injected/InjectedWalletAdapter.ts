@@ -7,14 +7,22 @@ export class InjectedWalletAdapter extends WalletAdapter {
   private _client: WalletClient | null = null;
   private _provider: EIP1193Provider | null = null;
 
+  get id(): string {
+    return 'injected-wallet-adapter';
+  }
+
+  get name(): string {
+    return 'Injected Wallet';
+  }
+
   async initialize() {
     window.addEventListener('eip6963:announceProvider', this.onAnnounceProvider);
     window.dispatchEvent(new Event('eip6963:requestProvider'));
   }
 
-  async initialConnect(walletId: string): Promise<void> {
-    console.debug(`Attempting initial connect to wallet with id ${walletId}`);
-    const provider = this._providers.get(walletId);
+  async initialConnect(adapterOptionId: string): Promise<void> {
+    console.debug(`Attempting initial connect to wallet with id ${adapterOptionId}`);
+    const provider = this._providers.get(adapterOptionId);
     if (!provider) return;
     this.updateStatus('connecting');
     this._provider = provider;
@@ -58,10 +66,10 @@ export class InjectedWalletAdapter extends WalletAdapter {
     this.updateAccounts(accounts, WalletConfigs.account);
   }
 
-  async connect(walletId: string) {
-    const provider = this._providers.get(walletId);
+  async connect(adapterOptionId: string) {
+    const provider = this._providers.get(adapterOptionId);
     if (!provider) {
-      throw new Error(`Provider with id ${walletId} not found`);
+      throw new Error(`Provider with id ${adapterOptionId} not found`);
     }
     this.updateStatus('connecting');
     this._provider = provider;
@@ -150,9 +158,10 @@ export class InjectedWalletAdapter extends WalletAdapter {
 
   private readonly onAnnounceProvider = (event: CustomEvent<EIP6963ProviderDetail>) => {
     const { info, provider } = event.detail;
-    this._providers.set(info.uuid, provider);
-    this.addWalletOption({
-      id: info.uuid,
+    const adapterOptionId = `${this.id}::${info.name}`;
+    this._providers.set(adapterOptionId, provider);
+    this.addAdapterOption({
+      id: adapterOptionId,
       name: info.name,
       icon: info.icon,
     });

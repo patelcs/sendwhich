@@ -1,8 +1,8 @@
 import { LocalStorage } from '../lib';
-import { Account, ActiveAccount } from './types';
+import { ActiveAccount } from './types';
 
 export interface Configs {
-  walletName?: string;
+  adapterOptionId?: string;
   account: ActiveAccount;
   chainId: number;
 }
@@ -20,8 +20,8 @@ export class WalletConfigs {
   static reset() {
     LocalStorage.remove(this.WALLET_CONFIG_STORAGE_KEY);
   }
-  static get walletName() {
-    return this.get()?.walletName;
+  static get adapterOptionId() {
+    return this.get()?.adapterOptionId;
   }
   static get account() {
     return this.get()?.account ?? null;
@@ -29,8 +29,8 @@ export class WalletConfigs {
   static get chainId() {
     return this.get()?.chainId;
   }
-  static set walletName(walletName: string | undefined) {
-    this.set({ ...this.get(), walletName });
+  static set adapterOptionId(adapterOptionId: string | undefined) {
+    this.set({ ...this.get(), adapterOptionId });
   }
   static set account(account: ActiveAccount) {
     this.set({ ...this.get(), account });

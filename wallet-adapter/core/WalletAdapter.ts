@@ -1,15 +1,15 @@
 import { Chain } from 'viem';
 import { EventEmitter } from '../lib';
-import { AdapterInterface, WalletEvents, WalletOption, Accounts, Status, ActiveAccount, Account } from './types';
+import { AdapterInterface, AdapterEvents, AdapterOption, Accounts, Status, ActiveAccount, Account } from './types';
 import { WalletConfigs } from './configs';
 import { getAddress } from 'viem';
 
-export abstract class WalletAdapter extends EventEmitter<WalletEvents> implements AdapterInterface {
+export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implements AdapterInterface {
   private _status: Status = 'disconnected';
   private _chainId: number = 0;
   private _accounts: Accounts = [];
   private _account: ActiveAccount = null;
-  private _walletOptions = new Map<string, WalletOption>();
+  private _adapterOptions = new Map<string, AdapterOption>();
   private readonly _supportedChains: Chain[];
 
   constructor(supportedChains: Chain[]) {
@@ -37,8 +37,8 @@ export abstract class WalletAdapter extends EventEmitter<WalletEvents> implement
     return this._account;
   }
 
-  get walletOptions(): readonly WalletOption[] {
-    return [...this._walletOptions.values()];
+  get adapterOptions(): readonly AdapterOption[] {
+    return [...this._adapterOptions.values()];
   }
 
   protected getChainById(chainId: number) {
@@ -58,9 +58,9 @@ export abstract class WalletAdapter extends EventEmitter<WalletEvents> implement
     this.updateStatus(accounts.length > 0 ? 'connected' : 'disconnected');
   }
 
-  protected addWalletOption(walletOption: WalletOption) {
-    this._walletOptions.set(walletOption.id, walletOption);
-    this.emit('walletAdded', walletOption);
+  protected addAdapterOption(adapterOption: AdapterOption) {
+    this._adapterOptions.set(adapterOption.id, adapterOption);
+    this.emit('adapterOptionAdded', adapterOption);
   }
 
   protected updateChain(chainId: number) {
@@ -88,9 +88,11 @@ export abstract class WalletAdapter extends EventEmitter<WalletEvents> implement
     this.emit('accountUpdated', this._account);
   }
 
+  abstract id: string;
+  abstract name: string;
   abstract initialize(): Promise<void>;
-  abstract initialConnect(walletId: string): Promise<void>;
-  abstract connect(walletId: string): Promise<void>;
+  abstract initialConnect(adapterOptionId: string): Promise<void>;
+  abstract connect(adapterOptionId: string): Promise<void>;
   abstract disconnect(): Promise<void>;
   abstract switchAccount(account: Account): Promise<void>;
   abstract switchChain(chainId: number): Promise<void>;

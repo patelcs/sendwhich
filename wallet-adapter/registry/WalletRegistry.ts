@@ -1,8 +1,7 @@
 import { EventEmitter } from '../lib';
 import {
-  WalletOption,
+  AdapterOption,
   ActiveAccount,
-  WalletEvents,
   AdapterInterface,
   Accounts,
   Account,
@@ -10,98 +9,137 @@ import {
   WalletAdapter,
   WalletConfigs,
 } from '../core';
+import { RegistryEvents, RegistryInterface } from './types';
 import { Chain } from 'viem';
 
-export class WalletRegistry extends EventEmitter<WalletEvents> implements AdapterInterface {
-  private _wallet: WalletAdapter | null = null;
-  constructor(private readonly _adapters: WalletAdapter[]) {
-    super();
-    if (this._adapters.length === 0) throw new Error('Empty wallet adapter array');
-    if (this._adapters.length === 1) this._wallet = this._adapters[0];
+export class WalletRegistry extends EventEmitter<RegistryEvents> implements RegistryInterface {
+  private readonly _adapters = new Map<string, WalletAdapter>();
+  private _adapterOptions = new Map<string, AdapterOption>();
+  private readonly _adapterOptionOwners = new Map<string, string>();
+  private _adapter: WalletAdapter | null = null;
+  private _adapterSubscriptions: (() => void)[] = [];
+  private _adapterOptionSubscriptions = new Map<string, () => void>();
 
-    this._adapters.forEach((a) => a.on('walletAdded', (w) => this.emit('walletAdded', w)));
+  /**
+   *
+   * @param adapters WalletAdapter[] Duplicate adapter will be overridden (only unique adapter.id's are supported)
+   */
+  constructor(adapters: WalletAdapter[]) {
+    super();
+    if (adapters.length === 0) throw new Error('Empty wallet adapter array');
+    if (adapters.length === 1) this._adapter = adapters[0];
+
+    adapters.forEach((adapter) => {
+      if (this._adapters.get(adapter.id)) {
+        for (const adapterOption of adapter.adapterOptions) {
+          this._adapterOptions.delete(adapterOption.id);
+          this._adapterOptionOwners.delete(adapterOption.id);
+        }
+        const unSubscribeOld = this._adapterOptionSubscriptions.get(adapter.id);
+        if (unSubscribeOld) unSubscribeOld();
+      }
+      this._adapters.set(adapter.id, adapter);
+      const unSubscribe = adapter.on('adapterOptionAdded', (adapterOption) =>
+        this.addAdapterOption(adapter.id, adapterOption),
+      );
+      this._adapterOptionSubscriptions.set(adapter.id, unSubscribe);
+    });
   }
 
   get status(): Status {
-    return this._wallet?.status ?? 'disconnected';
+    return this._adapter?.status ?? 'disconnected';
   }
 
   get supportedChains(): readonly Chain[] {
-    return this._wallet?.supportedChains ?? [];
+    return this._adapter?.supportedChains ?? [];
   }
 
   get chainId(): number {
-    return this._wallet?.chainId ?? 0;
+    return this._adapter?.chainId ?? 0;
   }
 
   get accounts(): Accounts {
-    return this._wallet?.accounts ?? [];
+    return this._adapter?.accounts ?? [];
   }
 
   get activeAccount(): ActiveAccount {
-    return this._wallet?.activeAccount ?? null;
+    return this._adapter?.activeAccount ?? null;
   }
 
-  get walletOptions(): readonly WalletOption[] {
-    return this._adapters.flatMap((a) => a.walletOptions);
+  get adapterOptions(): readonly AdapterOption[] {
+    return Array.from(this._adapterOptions.values());
+  }
+
+  get activeAdapter(): AdapterInterface | null {
+    return this._adapter;
   }
 
   async initialize() {
-    const walletName = WalletConfigs.walletName;
-    await Promise.all(
-      this._adapters.map(async (adapter) => {
-        await adapter.initialize();
-        const walletOption = adapter.walletOptions.find((w) => w.name == walletName);
-        if (walletOption) {
-          this._wallet?.removeReEmitter(this);
-          this._wallet = adapter;
-          this._wallet!.addReEmitter(this);
-          await this._wallet!.initialConnect(walletOption.id);
-        }
-      }),
-    );
+    await Promise.all(Array.from(this._adapters.values()).map((adapter) => adapter.initialize()));
+    const adapterOptionId = WalletConfigs.adapterOptionId;
+    if (!adapterOptionId) return;
+    const adapterId = this._adapterOptionOwners.get(adapterOptionId);
+    if (!adapterId) return;
+    const adapter = this._adapters.get(adapterId);
+    if (!adapter) return;
+    this.updateActiveAdapter(adapter);
+    await this._adapter!.initialConnect(adapterOptionId);
   }
 
-  async initialConnect(walletId: string): Promise<void> {
-    throw new Error('Useless function i guess');
-  }
-
-  async connect(walletId: string) {
-    const found = this.findAdapter(walletId);
-    if (!found) {
-      throw new Error(`Wallet with id ${walletId} not found`);
+  async connect(adapterOptionId: string) {
+    const adapterId = this._adapterOptionOwners.get(adapterOptionId);
+    if (!adapterId) {
+      throw new Error(`Adapter option with id ${adapterOptionId} not found`);
     }
-    this._wallet?.removeReEmitter(this);
-    this._wallet = found.adapter;
-    this._wallet!.addReEmitter(this);
-    await this._wallet!.connect(walletId);
-    WalletConfigs.walletName = found.walletName;
+    const adapter = this._adapters.get(adapterId);
+    this.updateActiveAdapter(adapter!);
+    await this._adapter!.connect(adapterOptionId);
+    WalletConfigs.adapterOptionId = adapterOptionId;
   }
 
   async disconnect() {
-    if (!this._wallet) {
+    if (!this._adapter) {
       throw new Error('No active wallet to disconnect');
     }
-    await this._wallet.disconnect();
+    await this._adapter.disconnect();
   }
 
   async switchAccount(account: Account) {
-    if (!this._wallet) {
+    if (!this._adapter) {
       throw new Error('No active wallet to set account');
     }
-    this._wallet.switchAccount(account);
+    this._adapter.switchAccount(account);
   }
 
   async switchChain(chainId: number): Promise<void> {
-    this._wallet?.switchChain(chainId);
+    this._adapter?.switchChain(chainId);
   }
 
-  private findAdapter(walletId: string) {
-    for (const adapter of this._adapters) {
-      for (const walletOption of adapter.walletOptions) {
-        if (walletOption.id === walletId) return { adapter, walletName: walletOption.name };
-      }
+  private addAdapterOption(adapterId: string, adapterOption: AdapterOption) {
+    this._adapterOptions.set(adapterOption.id, adapterOption);
+    this._adapterOptionOwners.set(adapterOption.id, adapterId);
+    this.emit('adapterOptionAdded', adapterOption);
+    this.emit('adapterOptionsUpdated', this.adapterOptions);
+  }
+
+  private updateActiveAdapter(adapter: AdapterInterface | null) {
+    // Clean up previous subscriptions
+    this._adapterSubscriptions.forEach((unsubscribe) => unsubscribe());
+    this._adapterSubscriptions = [];
+
+    this._adapter = adapter as WalletAdapter | null;
+
+    // Subscribe to events from the new adapter
+    if (this._adapter) {
+      this._adapterSubscriptions = [
+        this._adapter.on('statusUpdated', (status) => this.emit('statusUpdated', status)),
+        this._adapter.on('chainIdUpdated', (chainId) => this.emit('chainIdUpdated', chainId)),
+        this._adapter.on('accountsUpdated', (accounts) => this.emit('accountsUpdated', accounts)),
+        this._adapter.on('accountUpdated', (account) => this.emit('accountUpdated', account)),
+      ];
     }
-    return null;
+
+    // Emit the adapterUpdated event
+    this.emit('adapterUpdated', this._adapter);
   }
 }

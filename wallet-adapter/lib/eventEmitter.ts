@@ -2,7 +2,6 @@ export type Listener<T> = (payload: T) => void;
 
 export class EventEmitter<Events extends Record<string, any>> {
   private listeners = new Map<keyof Events, Set<Listener<any>>>();
-  private reEmitters = new Set<EventEmitter<Events>>();
 
   on<K extends keyof Events>(event: K, listener: Listener<Events[K]>) {
     if (!this.listeners.has(event)) {
@@ -22,16 +21,5 @@ export class EventEmitter<Events extends Record<string, any>> {
     this.listeners.get(event)?.forEach((listener) => {
       listener(payload);
     });
-    this.reEmitters.forEach((emitter) => {
-      emitter.emit(event, payload);
-    });
-  }
-
-  addReEmitter<C extends EventEmitter<Events>>(emitter: C) {
-    this.reEmitters.add(emitter);
-  }
-
-  removeReEmitter<C extends EventEmitter<Events>>(emitter: C) {
-    this.reEmitters.delete(emitter);
   }
 }

@@ -7,17 +7,17 @@ import ConnectWalletModal from './ConnectWalletModal';
 
 export default function ConnectWalletButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { walletOptions, status, connect } = useWallet();
+  const { adapterOptions, status, connect } = useWallet();
   const isConnecting = status === 'connecting';
 
-  const handleConnect = (walletId: string) => {
-    void connect(walletId);
+  const handleConnect = (adapterOptionId: string) => {
+    void connect(adapterOptionId);
     setIsModalOpen(false);
   };
 
   const handleClick = () => {
-    if (walletOptions.length === 1) {
-      handleConnect(walletOptions[0].id);
+    if (adapterOptions.length === 1) {
+      handleConnect(adapterOptions[0].id);
       return;
     }
     setIsModalOpen(true);
@@ -37,7 +37,7 @@ export default function ConnectWalletButton() {
 
       <ConnectWalletModal
         isOpen={isModalOpen}
-        walletOptions={walletOptions}
+        adapterOptions={adapterOptions}
         onClose={() => setIsModalOpen(false)}
         onSelect={handleConnect}
       />

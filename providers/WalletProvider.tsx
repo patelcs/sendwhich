@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { WalletRegistry, InjectedWalletAdapter, MiniKitAdapter, type AdapterInterface } from '@/wallet-adapter';
+import { WalletRegistry, InjectedWalletAdapter, MiniKitAdapter, type RegistryInterface } from '@/wallet-adapter';
 import { mainnet, sepolia, worldchain, worldchainSepolia } from 'viem/chains';
 import WalletLoadingScreen from '@/components/wallet/WalletLoadingScreen';
 import WalletConnectScreen from '@/components/wallet/WalletConnectScreen';
 
-interface WalletContextValues extends Omit<Omit<AdapterInterface, 'initialize'>, 'initialConnect'> {}
+interface WalletContextValues extends Omit<RegistryInterface, 'initialize' | 'activeAdapter'> {}
 
 const WalletContext = createContext<WalletContextValues | null>(null);
 
@@ -29,7 +29,7 @@ export function createWalletRegistry() {
 
 export default function WalletProvider({ children }: { children: React.ReactNode }) {
   const [registry] = useState(() => createWalletRegistry());
-  const [walletOptions, setWalletOptions] = useState(registry.walletOptions);
+  const [adapterOptions, setAdapterOptions] = useState(registry.adapterOptions);
   const [status, setStatus] = useState(registry.status);
   const [chainId, setChainId] = useState(registry.chainId);
   const [accounts, switchAccounts] = useState(registry.accounts);
@@ -38,7 +38,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
 
   useEffect(() => {
     const unSubscribers = [
-      registry.on('walletAdded', () => setWalletOptions(registry.walletOptions)),
+      registry.on('adapterOptionsUpdated', setAdapterOptions),
       registry.on('statusUpdated', setStatus),
       registry.on('chainIdUpdated', setChainId),
       registry.on('accountsUpdated', switchAccounts),
@@ -62,7 +62,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
         chainId,
         accounts,
         activeAccount,
-        walletOptions,
+        adapterOptions,
         disconnect: registry.disconnect.bind(registry),
         connect: registry.connect.bind(registry),
         switchAccount: registry.switchAccount.bind(registry),

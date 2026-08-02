@@ -1,5 +1,5 @@
 import { initializeEruda } from '../../lib';
-import { WalletAdapter, Account, WalletOption, WalletConfigs } from '../../core';
+import { WalletAdapter, Account, AdapterOption, WalletConfigs } from '../../core';
 import { MiniKit } from '@worldcoin/minikit-js';
 import type { CommandResultByVia, MiniKitWalletAuthOptions, WalletAuthResult } from '@worldcoin/minikit-js/commands';
 import { worldchain } from 'viem/chains';
@@ -11,11 +11,19 @@ export class MiniKitAdapter extends WalletAdapter {
     super([worldchain]);
   }
 
+  get id(): string {
+    return 'minikit-wallet-adapter';
+  }
+
+  get name(): string {
+    return 'MiniKit Wallet';
+  }
+
   get chainId(): number {
     return 480;
   }
 
-  get walletOptions(): readonly WalletOption[] {
+  get adapterOptions(): readonly AdapterOption[] {
     return [
       {
         id: 'minikit-wallet',
@@ -38,11 +46,11 @@ export class MiniKitAdapter extends WalletAdapter {
     }
   }
 
-  async initialConnect(walletId: string): Promise<void> {
-    await this.connect(walletId);
+  async initialConnect(adapterOptionId: string): Promise<void> {
+    await this.connect(adapterOptionId);
   }
 
-  async connect(walletId: string) {
+  async connect(adapterOptionId: string) {
     const input = {
       nonce: 'randomnonce123456',
     } satisfies MiniKitWalletAuthOptions;

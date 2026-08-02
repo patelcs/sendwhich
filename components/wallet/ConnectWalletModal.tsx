@@ -3,16 +3,16 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Wallet, X } from 'lucide-react';
-import type { WalletOption } from '@/wallet-adapter';
+import type { AdapterOption } from '@/wallet-adapter';
 
 interface ConnectWalletModalProps {
   isOpen: boolean;
-  walletOptions: readonly WalletOption[];
+  adapterOptions: readonly AdapterOption[];
   onClose: () => void;
-  onSelect: (walletId: string) => void;
+  onSelect: (adapterOptionId: string) => void;
 }
 
-export default function ConnectWalletModal({ isOpen, walletOptions, onClose, onSelect }: ConnectWalletModalProps) {
+export default function ConnectWalletModal({ isOpen, adapterOptions, onClose, onSelect }: ConnectWalletModalProps) {
   const [failedWalletIcons, setFailedWalletIcons] = useState<Set<string>>(new Set());
 
   if (!isOpen) return null;
@@ -40,33 +40,33 @@ export default function ConnectWalletModal({ isOpen, walletOptions, onClose, onS
         </div>
 
         <div className="space-y-2">
-          {walletOptions.map((walletOption) => (
+          {adapterOptions.map((adapterOption) => (
             <button
-              key={walletOption.id}
+              key={adapterOption.id}
               type="button"
-              onClick={() => onSelect(walletOption.id)}
+              onClick={() => onSelect(adapterOption.id)}
               className="flex w-full items-center gap-3 rounded-xl border border-(--border) bg-(--background) px-4 py-3 text-left text-sm font-medium text-(--foreground) transition-all hover:border-(--brand)/50 hover:bg-(--brand)/5"
             >
-              {walletOption.icon && !failedWalletIcons.has(walletOption.id) ? (
+              {adapterOption.icon && !failedWalletIcons.has(adapterOption.id) ? (
                 // Wallet providers supply these external icon URLs at runtime.
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={walletOption.icon}
+                  src={adapterOption.icon}
                   alt=""
                   width={18}
                   height={18}
                   className="size-4.5 shrink-0 rounded-sm"
-                  onError={() => setFailedWalletIcons((failedIcons) => new Set(failedIcons).add(walletOption.id))}
+                  onError={() => setFailedWalletIcons((failedIcons) => new Set(failedIcons).add(adapterOption.id))}
                 />
               ) : (
                 <Wallet size={18} className="text-(--brand)" aria-hidden="true" />
               )}
-              {walletOption.name}
+              {adapterOption.name}
             </button>
           ))}
         </div>
 
-        {walletOptions.length === 0 && <p className="text-center text-sm text-(--muted)">No wallets are available.</p>}
+        {adapterOptions.length === 0 && <p className="text-center text-sm text-(--muted)">No wallets are available.</p>}
 
         <p className="mt-4 text-center text-xs text-(--muted)">By connecting, you agree to the terms of service.</p>
       </div>

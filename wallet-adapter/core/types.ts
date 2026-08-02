@@ -5,30 +5,32 @@ export type Account = `0x${string}`;
 export type ActiveAccount = Account | null;
 export type Accounts = readonly Account[];
 
-export interface WalletOption {
+export interface AdapterOption {
   id: string;
   name: string;
   icon: string;
 }
 
-export interface WalletEvents {
+export interface AdapterEvents {
   statusUpdated: Status;
   chainIdUpdated: number;
   accountsUpdated: Accounts;
   accountUpdated: ActiveAccount;
-  walletAdded: WalletOption;
+  adapterOptionAdded: AdapterOption;
 }
 
 export interface AdapterInterface {
+  id: string;
+  name: string;
   status: Status;
   supportedChains: readonly Chain[];
   chainId: number;
   accounts: Accounts;
   activeAccount: ActiveAccount;
-  walletOptions: readonly WalletOption[];
+  adapterOptions: readonly AdapterOption[];
   initialize(): Promise<void>;
-  initialConnect(walletId: string): Promise<void>;
-  connect(walletId: string): Promise<void>;
+  initialConnect(adapterOptionId: string): Promise<void>;
+  connect(adapterOptionId: string): Promise<void>;
   disconnect(): Promise<void>;
   switchAccount(account: Account): void;
   switchChain(chainId: number): Promise<void>;
