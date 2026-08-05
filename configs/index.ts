@@ -1,2 +1,3 @@
+export * from './env';
 export * from './registry';
-export * from './navbar';
+export * from './ui-configs';

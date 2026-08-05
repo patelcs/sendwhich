@@ -8,12 +8,13 @@ import { useTheme } from '@/providers/ThemeProvider';
 import { useWallet } from '@/providers/WalletProvider';
 import AccountMenu from '../wallet/AccountMenu';
 import ChainMenu from '../wallet/ChainMenu';
-import { MOBILE_NAV_LINKS, MORE_LINKS, NAV_LINKS } from '@/configs';
+import { uiConfigs } from '@/configs';
 
 export default function Navbar() {
+  const { navbar: navbarConfigs } = uiConfigs;
   const [moreOpen, setMoreOpen] = useState(false);
   const { theme, toggle } = useTheme();
-  const { status, isInitializing, adapterConfigs } = useWallet();
+  const { status, isInitializing } = useWallet();
   const pathname = usePathname();
   const isConnected = !isInitializing && status === 'connected';
 
@@ -21,7 +22,7 @@ export default function Navbar() {
     <>
       <nav className={'sticky top-0 z-50 md:border-b md:border-(--navbar-border) md:bg-(--navbar-background)'}>
         <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          {adapterConfigs.showBrandInTopNavbar && (
+          {navbarConfigs.showBrandInTopNavbar && (
             <Link href="/" className="flex items-center gap-2 text-lg font-bold text-(--navbar-foreground)">
               <Zap size={22} className="text-(--brand)" />
               <span className="bg-linear-to-r from-(--brand) to-(--brand-secondary) bg-clip-text text-transparent">
@@ -31,15 +32,14 @@ export default function Navbar() {
           )}
 
           <div className="ml-8 hidden items-center gap-1 md:flex">
-            {NAV_LINKS.map((link) => (
+            {navbarConfigs.links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  pathname === link.href
-                    ? 'bg-(--brand)/10 text-(--brand)'
-                    : 'text-(--navbar-muted) hover:bg-(--navbar-accent) hover:text-(--navbar-foreground)'
-                }`}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${pathname === link.href
+                  ? 'bg-(--brand)/10 text-(--brand)'
+                  : 'text-(--navbar-muted) hover:bg-(--navbar-accent) hover:text-(--navbar-foreground)'
+                  }`}
               >
                 {link.label}
               </Link>
@@ -85,7 +85,7 @@ export default function Navbar() {
           >
             <div className="mx-auto max-w-md">
               <div className="space-y-1">
-                {MORE_LINKS.map((item, index) => {
+                {navbarConfigs.linksMobileMore.map((item, index) => {
                   if (item.type === 'separator') {
                     return (
                       <div key={`separator-${index}`} role="separator" className="my-2 border-t border-(--border)" />
@@ -128,7 +128,7 @@ export default function Navbar() {
 
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-(--navbar-border) bg-(--bottom-bar) pb-[env(safe-area-inset-bottom)] md:hidden">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-2">
-          {MOBILE_NAV_LINKS.map(({ href, icon: Icon, label }) => {
+          {navbarConfigs.linksMobile.map(({ href, icon: Icon, label }) => {
             const isActive = pathname === href;
 
             return (
@@ -136,9 +136,8 @@ export default function Navbar() {
                 key={href}
                 href={href}
                 aria-current={isActive ? 'page' : undefined}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-                  isActive ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
-                }`}
+                className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${isActive ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
+                  }`}
               >
                 <Icon size={20} aria-hidden="true" />
                 <span className="truncate">{label}</span>
@@ -150,9 +149,8 @@ export default function Navbar() {
             onClick={() => setMoreOpen((open) => !open)}
             aria-expanded={moreOpen}
             aria-controls="mobile-more-menu"
-            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-              moreOpen ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
-            }`}
+            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-2 text-xs font-medium transition-colors ${moreOpen ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
+              }`}
           >
             <MoreHorizontal size={20} aria-hidden="true" />
             <span>More</span>

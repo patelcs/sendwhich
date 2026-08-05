@@ -5,10 +5,12 @@ import type { CommandResultByVia, MiniKitWalletAuthOptions, WalletAuthResult } f
 import { worldchain } from 'viem/chains';
 
 export class MiniKitAdapter extends WalletAdapter {
-  private _install = MiniKit.install();
+  private _installSuccess: boolean;
 
-  constructor() {
+  constructor(appId?: string) {
     super([worldchain]);
+    const { success } = MiniKit.install(appId);
+    this._installSuccess = success;
   }
 
   get id(): AdapterId {
@@ -20,7 +22,7 @@ export class MiniKitAdapter extends WalletAdapter {
   }
 
   get isMinikitEnvironment() {
-    return this._install.success;
+    return this._installSuccess;
   }
 
   async initialize() {

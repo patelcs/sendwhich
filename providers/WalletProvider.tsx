@@ -2,12 +2,10 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { type RegistryInterface } from '@/wallet-adapter';
-import { AdapterConfigs, createWalletRegistry } from '@/configs';
-import { getAdapterConfigs } from '@/configs/registry/getAdapterConfigs';
+import { createWalletRegistry } from '@/configs';
 
 interface WalletContextValues extends Omit<RegistryInterface, 'initialize' | 'activeAdapter'> {
   isInitializing: boolean;
-  adapterConfigs: AdapterConfigs;
 }
 
 const WalletContext = createContext<WalletContextValues | null>(null);
@@ -21,8 +19,7 @@ export const useWallet = () => {
 };
 
 export default function WalletProvider({ children }: { children: React.ReactNode }) {
-  const [{ registry, defaultAdapterConfigs }] = useState(() => createWalletRegistry());
-  const [adapterConfigs, setAdapterConfigs] = useState(defaultAdapterConfigs);
+  const [registry] = useState(() => createWalletRegistry());
   const [adapterOptions, setAdapterOptions] = useState(registry.adapterOptions);
   const [status, setStatus] = useState(registry.status);
   const [chainId, setChainId] = useState(registry.chainId);
@@ -37,13 +34,6 @@ export default function WalletProvider({ children }: { children: React.ReactNode
       registry.on('chainIdUpdated', setChainId),
       registry.on('accountsUpdated', switchAccounts),
       registry.on('accountUpdated', setActiveAccount),
-      registry.on('adapterUpdated', (adapter) => {
-        if (!adapter) {
-          setAdapterConfigs(defaultAdapterConfigs);
-          return;
-        }
-        setAdapterConfigs(getAdapterConfigs(adapter.id));
-      }),
     ];
 
     registry.initialize().finally(() => setIsInitializing(false));
@@ -56,7 +46,6 @@ export default function WalletProvider({ children }: { children: React.ReactNode
   return (
     <WalletContext.Provider
       value={{
-        adapterConfigs,
         status,
         isInitializing,
         supportedChains: registry.supportedChains,
