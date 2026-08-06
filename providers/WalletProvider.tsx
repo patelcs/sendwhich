@@ -3,9 +3,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { type RegistryInterface } from '@/wallet-adapter';
 import { createWalletRegistry } from '@/configs';
+import { ChainConfig, getChainConfig } from '@/configs/chain';
 
 interface WalletContextValues extends Omit<RegistryInterface, 'initialize' | 'activeAdapter'> {
   isInitializing: boolean;
+  chainConfig?: ChainConfig
 }
 
 const WalletContext = createContext<WalletContextValues | null>(null);
@@ -25,6 +27,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
   const [chainId, setChainId] = useState(registry.chainId);
   const [accounts, switchAccounts] = useState(registry.accounts);
   const [activeAccount, setActiveAccount] = useState(registry.activeAccount);
+  const [chainConfig, setChainConfig] = useState(getChainConfig(chainId));
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
@@ -43,6 +46,8 @@ export default function WalletProvider({ children }: { children: React.ReactNode
     };
   }, [registry]);
 
+  useEffect(() => setChainConfig(getChainConfig(chainId)), [chainId]);
+
   return (
     <WalletContext.Provider
       value={{
@@ -50,6 +55,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
         isInitializing,
         supportedChains: registry.supportedChains,
         chainId,
+        chainConfig,
         accounts,
         activeAccount,
         adapterOptions,
