@@ -70,9 +70,8 @@ export default function ChainMenu() {
                   type="button"
                   onClick={() => handleSelect(chain.id)}
                   aria-current={isSelected}
-                  className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${
-                    isSelected ? 'bg-(--brand)/10 text-(--brand)' : 'text-(--foreground) hover:bg-(--accent)'
-                  }`}
+                  className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${isSelected ? 'bg-(--brand)/10 text-(--brand)' : 'text-(--foreground) hover:bg-(--accent)'
+                    }`}
                 >
                   <span className="flex min-w-0 items-center gap-2">
                     <Waypoints size={14} className="shrink-0" aria-hidden="true" />

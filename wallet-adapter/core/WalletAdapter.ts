@@ -14,7 +14,7 @@ import { WalletConfigs } from './configs';
 import { getAddress } from 'viem';
 
 export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implements AdapterInterface {
-  private _status: Status = 'disconnected';
+  private _status: Status = 'initializing';
   private _chainId: number = 0;
   private _accounts: Accounts = [];
   private _account: ActiveAccount = null;
@@ -94,6 +94,7 @@ export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implemen
 
     this._account = account;
     WalletConfigs.account = account;
+    if (!account) this.updateStatus('disconnected');
     this.emit('accountUpdated', this._account);
   }
 

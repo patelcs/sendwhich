@@ -23,4 +23,5 @@ export interface NavbarConfigs {
 
 export interface AdapterConfigs {
   navbar: NavbarConfigs;
+  connectName: string;
 }

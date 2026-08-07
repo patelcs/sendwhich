@@ -5,14 +5,14 @@ import { createPortal } from 'react-dom';
 import { Wallet, X } from 'lucide-react';
 import type { AdapterOption } from '@/wallet-adapter';
 
-interface ConnectWalletModalProps {
+interface ConnectModalProps {
   isOpen: boolean;
   adapterOptions: readonly AdapterOption[];
   onClose: () => void;
   onSelect: (adapterOptionId: string) => void;
 }
 
-export default function ConnectWalletModal({ isOpen, adapterOptions, onClose, onSelect }: ConnectWalletModalProps) {
+export default function ConnectModal({ isOpen, adapterOptions, onClose, onSelect }: ConnectModalProps) {
   const [failedWalletIcons, setFailedWalletIcons] = useState<Set<string>>(new Set());
 
   if (!isOpen) return null;

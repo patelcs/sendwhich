@@ -18,6 +18,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
   async initialize() {
     window.addEventListener('eip6963:announceProvider', this.onAnnounceProvider);
     window.dispatchEvent(new Event('eip6963:requestProvider'));
+    this.updateStatus('initialized');
   }
 
   async initialConnect(adapterOptionId: string): Promise<void> {
@@ -78,10 +79,16 @@ export class InjectedWalletAdapter extends WalletAdapter {
       transport: custom(provider),
     });
     this.registerProviderEvents();
-    await this.switchChain(this.supportedChains[0].id);
 
-    const accounts: Accounts = await this._client.requestAddresses();
-    this.updateAccounts(accounts);
+    try {
+      const accounts: Accounts = await this._client.requestAddresses();
+      WalletConfigs.adapterOptionId = adapterOptionId;
+      await this.switchChain(this.supportedChains[0].id);
+      this.updateAccounts(accounts);
+    } catch (error) {
+      console.error('Wallet connect error:', error);
+      this.updateStatus('disconnected');
+    }
   }
 
   async disconnect() {
@@ -118,6 +125,8 @@ export class InjectedWalletAdapter extends WalletAdapter {
     if (!this._client) {
       throw new Error('Wallet client is not initialized');
     }
+    const oldStatus = this.status;
+    this.updateStatus('connecting');
     try {
       await this._client.switchChain({ id: chain.id });
     } catch (error: any) {
@@ -126,15 +135,20 @@ export class InjectedWalletAdapter extends WalletAdapter {
           await this._client.addChain({ chain });
           await this._clientSwitchChain(chainId);
         } catch (addError) {
-          throw addError;
+          console.error('chain add error:', addError);
+          this.updateStatus(oldStatus);
         }
-      } else throw error;
+      } else {
+        console.error('switch chain error:', error);
+        this.updateStatus(oldStatus);
+      };
     }
     this._client = createWalletClient({
       chain,
       transport: custom(this._provider!),
     });
     this.updateChain(chain.id);
+    this.updateStatus('connected');
   }
 
   async switchChain(chainId: number): Promise<void> {

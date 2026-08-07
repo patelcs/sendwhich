@@ -6,7 +6,6 @@ import { createWalletRegistry } from '@/configs';
 import { ChainConfig, getChainConfig } from '@/configs/chain';
 
 interface WalletContextValues extends Omit<RegistryInterface, 'initialize' | 'activeAdapter'> {
-  isInitializing: boolean;
   chainConfig?: ChainConfig
 }
 
@@ -28,7 +27,6 @@ export default function WalletProvider({ children }: { children: React.ReactNode
   const [accounts, switchAccounts] = useState(registry.accounts);
   const [activeAccount, setActiveAccount] = useState(registry.activeAccount);
   const [chainConfig, setChainConfig] = useState(getChainConfig(chainId));
-  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
     const unSubscribers = [
@@ -39,7 +37,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
       registry.on('accountUpdated', setActiveAccount),
     ];
 
-    registry.initialize().finally(() => setIsInitializing(false));
+    void registry.initialize();
 
     return () => {
       unSubscribers.forEach((unSubscribe) => unSubscribe());
@@ -52,7 +50,6 @@ export default function WalletProvider({ children }: { children: React.ReactNode
     <WalletContext.Provider
       value={{
         status,
-        isInitializing,
         supportedChains: registry.supportedChains,
         chainId,
         chainConfig,

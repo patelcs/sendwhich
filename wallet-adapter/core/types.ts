@@ -1,6 +1,6 @@
 import { type Chain } from 'viem';
 
-export type Status = 'disconnected' | 'connecting' | 'connected';
+export type Status = 'initializing' | 'initialized' | 'connecting' | 'connected' | 'disconnected';
 export type Account = `0x${string}`;
 export type ActiveAccount = Account | null;
 export type Accounts = readonly Account[];

@@ -18,6 +18,7 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
   private _adapter: WalletAdapter | null = null;
   private _adapterSubscriptions: (() => void)[] = [];
   private _adapterOptionSubscriptions = new Map<string, () => void>();
+  private _initializing = true;
 
   /**
    *
@@ -42,7 +43,7 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
   }
 
   get status(): Status {
-    return this._adapter?.status ?? 'disconnected';
+    return this._adapter?.status ?? this._initializing ? 'initializing' : 'disconnected';
   }
 
   get supportedChains(): readonly Chain[] {
@@ -72,13 +73,24 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
   async initialize() {
     await Promise.all(Array.from(this._adapters.values()).map((adapter) => adapter.initialize()));
     const adapterOptionId = WalletConfigs.adapterOptionId;
-    if (!adapterOptionId) return;
+    if (!adapterOptionId) return this.setInitialized();
     const adapterId = this._adapterOptionOwners.get(adapterOptionId);
-    if (!adapterId) return;
+    if (!adapterId) return this.setInitialized();
     const adapter = this._adapters.get(adapterId);
-    if (!adapter) return;
+    if (!adapter) return this.setInitialized();
     this.updateActiveAdapter(adapter);
-    await this._adapter!.initialConnect(adapterOptionId);
+    try {
+      await this._adapter!.initialConnect(adapterOptionId);
+    } catch (error) {
+      console.error('Error in registry initialization:', error);
+      this.setInitialized();
+    }
+  }
+
+  private setInitialized() {
+    if (!this._initializing) return;
+    this._initializing = false;
+    this.emit('statusUpdated', 'initialized');
   }
 
   async connect(adapterOptionId: string) {
@@ -89,7 +101,6 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
     const adapter = this._adapters.get(adapterId);
     this.updateActiveAdapter(adapter!);
     await this._adapter!.connect(adapterOptionId);
-    WalletConfigs.adapterOptionId = adapterOptionId;
   }
 
   async disconnect() {

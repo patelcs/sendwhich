@@ -1,5 +1,5 @@
 import { initializeEruda } from '../../lib';
-import { WalletAdapter, Account, AdapterId } from '../../core';
+import { WalletAdapter, Account, AdapterId, WalletConfigs } from '../../core';
 import { MiniKit } from '@worldcoin/minikit-js';
 import type { CommandResultByVia, MiniKitWalletAuthOptions, WalletAuthResult } from '@worldcoin/minikit-js/commands';
 import { worldchain } from 'viem/chains';
@@ -39,6 +39,7 @@ export class MiniKitAdapter extends WalletAdapter {
     } catch (error) {
       console.error('initialization error:', error);
     }
+    this.updateStatus('initialized');
   }
 
   async initialConnect(adapterOptionId: string): Promise<void> {
@@ -46,6 +47,7 @@ export class MiniKitAdapter extends WalletAdapter {
   }
 
   async connect(adapterOptionId: string) {
+    this.updateStatus('connecting');
     const input = {
       nonce: 'randomnonce123456',
     } satisfies MiniKitWalletAuthOptions;
@@ -53,6 +55,7 @@ export class MiniKitAdapter extends WalletAdapter {
     try {
       const result: CommandResultByVia<WalletAuthResult> = await MiniKit.walletAuth(input);
       const account = result.data.address as Account;
+      WalletConfigs.adapterOptionId = adapterOptionId;
       this.updateAccounts([account]);
     } catch (error) {
       console.error('Command failed', error);

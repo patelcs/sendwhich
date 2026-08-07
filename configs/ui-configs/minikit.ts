@@ -7,5 +7,6 @@ export const MINIKIT_CONFIGS: AdapterConfigs = {
     linksMobile: NAV_LINKS_MOBILE,
     linksMobileMore: NAV_LINKS_MOBILE_MORE,
     showBrandInTopNavbar: false,
-  }
+  },
+  connectName: 'Sign In'
 } as const;

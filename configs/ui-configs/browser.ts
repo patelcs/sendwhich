@@ -7,5 +7,6 @@ export const BROWSER_CONFIGS: AdapterConfigs = {
     linksMobile: NAV_LINKS_MOBILE,
     linksMobileMore: NAV_LINKS_MOBILE_MORE,
     showBrandInTopNavbar: true,
-  }
+  },
+  connectName: 'Connect Wallet'
 } as const;

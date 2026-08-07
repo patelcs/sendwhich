@@ -1,7 +1,6 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
-import WalletGate from '@/components/wallet/WalletGate';
 import WalletProvider from '@/providers/WalletProvider';
 import ThemeProvider from '@/providers/ThemeProvider';
 export { metadata } from '@/lib/metadata';
@@ -23,7 +22,7 @@ export default function RootLayout({
         <ThemeProvider>
           <WalletProvider>
             <Navbar />
-            <WalletGate>{children}</WalletGate>
+            {children}
           </WalletProvider>
         </ThemeProvider>
       </body>

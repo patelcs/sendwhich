@@ -5,18 +5,14 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Moon, MoreHorizontal, Sun, Zap } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
-import { useWallet } from '@/providers/WalletProvider';
-import AccountMenu from '../wallet/AccountMenu';
-import ChainMenu from '../wallet/ChainMenu';
 import { uiConfigs } from '@/configs';
+import { WalletConnection } from '../wallet';
 
 export default function Navbar() {
   const { navbar: navbarConfigs } = uiConfigs;
   const [moreOpen, setMoreOpen] = useState(false);
   const { theme, toggle } = useTheme();
-  const { status, isInitializing } = useWallet();
   const pathname = usePathname();
-  const isConnected = !isInitializing && status === 'connected';
 
   return (
     <>
@@ -49,21 +45,15 @@ export default function Navbar() {
           <div className="ml-auto flex min-w-0 items-center gap-2 sm:gap-3">
             {/* Theme button temporarily disabled — light theme isn't ready yet.
             <button
-              type="button"
-              onClick={toggle}
-              className="flex items-center justify-center p-2 text-(--icon-muted) transition-colors hover:text-(--icon-muted-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand)"
-              aria-label="Toggle theme"
+            type="button"
+            onClick={toggle}
+            className="flex items-center justify-center p-2 text-(--icon-muted) transition-colors hover:text-(--icon-muted-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand)"
+            aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
             */}
-
-            {isConnected && (
-              <>
-                <ChainMenu />
-                <AccountMenu />
-              </>
-            )}
+            <WalletConnection />
           </div>
         </div>
       </nav>
