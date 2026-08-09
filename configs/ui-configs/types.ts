@@ -10,18 +10,18 @@ export type MobileNavigationLink = NavigationLink & {
 export type MoreLinkItem = MobileNavigationLink & {
   type: 'link';
 };
-export type MoreSeparatorItem = {
-  type: 'separator';
-};
-export type MoreNavigationItem = MoreLinkItem | MoreSeparatorItem;
-export interface NavbarConfigs {
-  links: NavigationLink[];
-  linksMobile: MobileNavigationLink[];
-  linksMobileMore: MoreNavigationItem[];
-  showBrandInTopNavbar: boolean;
+export interface MoreNavigationSection {
+  title?: string;
+  items: MoreLinkItem[];
 }
-
+export interface RouteConfig {
+  navLinks: NavigationLink[];
+  navLinksMobile: MobileNavigationLink[];
+  navLinksMobileMore: MoreNavigationSection[];
+  settingLinks: MobileNavigationLink[];
+}
 export interface AdapterConfigs {
-  navbar: NavbarConfigs;
+  routes: RouteConfig;
+  showBrandInTopNavbar: boolean;
   connectName: string;
 }

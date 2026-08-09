@@ -22,7 +22,11 @@ export default function RootLayout({
         <ThemeProvider>
           <WalletProvider>
             <Navbar />
-            {children}
+            <div
+              className='mx-auto w-full max-w-7xl px-4 pt-6 pb-[calc(3.5rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8 md:pt-10 md:pb-10'
+            >
+              {children}
+            </div>
           </WalletProvider>
         </ThemeProvider>
       </body>
