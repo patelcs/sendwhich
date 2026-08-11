@@ -1,4 +1,15 @@
-import { ArrowLeftRight, BookOpen, Coins, Landmark, MessageCircle, Send, Settings2, Wallet, WalletMinimal, Waypoints } from 'lucide-react';
+import {
+  ArrowLeftRight,
+  BookOpen,
+  Coins,
+  Landmark,
+  MessageCircle,
+  Send,
+  Settings2,
+  Wallet,
+  WalletMinimal,
+  Waypoints,
+} from 'lucide-react';
 import { DISCORD_URL, DOC_URL } from '@/lib/constants';
 import type { MobileNavigationLink, MoreNavigationSection, NavigationLink } from './types';
 
@@ -50,5 +61,5 @@ export const ROUTES = {
   navLinksMobile: NAV_LINKS_MOBILE,
   navLinksMobileMore: NAV_LINKS_MOBILE_MORE,
   settingLinks: SETTINGS_NAV_LINKS,
-  addressBookLinks: ADDRESS_BOOK_LINKS
+  addressBookLinks: ADDRESS_BOOK_LINKS,
 } as const;

@@ -43,7 +43,7 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
   }
 
   get status(): Status {
-    return this._adapter?.status ?? this._initializing ? 'initializing' : 'disconnected';
+    return (this._adapter?.status ?? this._initializing) ? 'initializing' : 'disconnected';
   }
 
   get supportedChains(): readonly Chain[] {
@@ -51,7 +51,7 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
   }
 
   get chainId(): number {
-    return this._adapter?.chainId ?? 0;
+    return this._adapter?.chainId ?? 1;
   }
 
   get accounts(): Accounts {

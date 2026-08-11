@@ -4,7 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MobileNavigationLink } from '@/configs/ui-configs/types';
 
-export default function SecondaryNavbar({ children, subRoutes }: { children: React.ReactNode, subRoutes: MobileNavigationLink[] }) {
+export default function SecondaryNavbar({
+  children,
+  subRoutes,
+}: {
+  children: React.ReactNode;
+  subRoutes: MobileNavigationLink[];
+}) {
   const pathname = usePathname();
 
   return (
@@ -19,8 +25,9 @@ export default function SecondaryNavbar({ children, subRoutes }: { children: Rea
                 key={href}
                 href={href}
                 aria-current={isActive ? 'page' : undefined}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${isActive ? 'bg-(--brand)/10 text-(--brand)' : 'text-(--foreground) hover:bg-(--accent)'
-                  }`}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                  isActive ? 'bg-(--brand)/10 text-(--brand)' : 'text-(--foreground) hover:bg-(--accent)'
+                }`}
               >
                 <Icon size={18} className={isActive ? 'text-(--brand)' : 'text-(--muted)'} aria-hidden="true" />
                 {label}
@@ -30,9 +37,7 @@ export default function SecondaryNavbar({ children, subRoutes }: { children: Rea
         </nav>
       </aside>
 
-      <div className="min-w-0 flex-1 py-4 md:rounded-2xl md:border md:border-(--border) md:bg-(--card) md:p-4 lg:p-6">
-        {children}
-      </div>
+      <div className="min-w-0 flex-1">{children}</div>
     </div>
   );
 }

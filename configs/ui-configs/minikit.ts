@@ -3,6 +3,6 @@ import type { AdapterConfigs } from './types';
 
 export const MINIKIT_CONFIGS: AdapterConfigs = {
   routes: ROUTES,
-  showBrandInTopNavbar: false,
-  connectName: 'Sign In'
+  showBrandInTopNavbar: true,
+  connectName: 'Sign In',
 } as const;

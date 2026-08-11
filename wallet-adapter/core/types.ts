@@ -1,8 +1,12 @@
-import { type Chain } from 'viem';
+import { type Chain, type Address as ViemAddress, isAddress } from 'viem';
+import z from 'zod';
 
 export type Status = 'initializing' | 'initialized' | 'connecting' | 'connected' | 'disconnected';
-export type Account = `0x${string}`;
-export type ActiveAccount = Account | null;
+
+export type Account = ViemAddress;
+export type Address = ViemAddress;
+export const AccountSchema = z.string().refine(isAddress, { error: 'Invalid Ethereum Address' }).nullable();
+export type ActiveAccount = z.infer<typeof AccountSchema>;
 export type Accounts = readonly Account[];
 
 export type AdapterId = 'injected-wallet-adapter' | 'minikit-wallet-adapter';

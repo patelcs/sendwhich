@@ -1,41 +1,66 @@
-import { LocalStorage } from '../lib';
-import { ActiveAccount } from './types';
+import { LocalStorage } from '@/lib/LocalStorage';
+import { AccountSchema, ActiveAccount } from './types';
+import { z } from 'zod';
 
-export interface Configs {
-  adapterOptionId?: string;
-  account: ActiveAccount;
-  chainId: number;
-}
+export const ConfigSchema = z.object({
+  adapterOptionId: z.string().optional(),
+  account: AccountSchema,
+  chainId: z.number(),
+});
+
+export type Configs = z.infer<typeof ConfigSchema>;
 
 export class WalletConfigs {
   static WALLET_CONFIG_STORAGE_KEY = 'wallet-configs';
-  static get() {
-    const configs = LocalStorage.load<Configs>(this.WALLET_CONFIG_STORAGE_KEY);
-    if (!configs) return { account: null, chainId: 0 };
-    return configs;
+  private static _configs: Configs = { account: null, chainId: 1 };
+  private static _loaded = false;
+
+  private static loadIfRequired() {
+    if (this._loaded) return;
+    const configs = LocalStorage.load<Configs>(this.WALLET_CONFIG_STORAGE_KEY, ConfigSchema);
+    console.log('loaded configs:', configs);
+    if (configs) this._configs = configs;
+    this._loaded = true;
   }
-  static set(configs: Configs) {
-    LocalStorage.save(this.WALLET_CONFIG_STORAGE_KEY, configs);
+
+  private static save() {
+    LocalStorage.save(this.WALLET_CONFIG_STORAGE_KEY, this._configs);
   }
+
   static reset() {
     LocalStorage.remove(this.WALLET_CONFIG_STORAGE_KEY);
   }
+
   static get adapterOptionId() {
-    return this.get()?.adapterOptionId;
+    this.loadIfRequired();
+    return this._configs.adapterOptionId;
   }
+
   static get account() {
-    return this.get()?.account ?? null;
+    this.loadIfRequired();
+    return this._configs.account;
   }
+
   static get chainId() {
-    return this.get()?.chainId;
+    this.loadIfRequired();
+    return this._configs.chainId;
   }
+
   static set adapterOptionId(adapterOptionId: string | undefined) {
-    this.set({ ...this.get(), adapterOptionId });
+    this.loadIfRequired();
+    this._configs.adapterOptionId = adapterOptionId;
+    this.save();
   }
+
   static set account(account: ActiveAccount) {
-    this.set({ ...this.get(), account });
+    this.loadIfRequired();
+    this._configs.account = account;
+    this.save();
   }
+
   static set chainId(chainId: number) {
-    this.set({ ...this.get(), chainId });
+    this.loadIfRequired();
+    this._configs.chainId = chainId;
+    this.save();
   }
 }

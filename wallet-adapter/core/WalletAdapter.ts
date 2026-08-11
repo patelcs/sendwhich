@@ -15,7 +15,7 @@ import { getAddress } from 'viem';
 
 export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implements AdapterInterface {
   private _status: Status = 'initializing';
-  private _chainId: number = 0;
+  private _chainId: number = 1;
   private _accounts: Accounts = [];
   private _account: ActiveAccount = null;
   private _adapterOptions = new Map<string, AdapterOption>();

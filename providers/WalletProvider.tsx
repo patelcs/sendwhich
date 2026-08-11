@@ -6,7 +6,7 @@ import { createWalletRegistry } from '@/configs';
 import { ChainConfig, getChainConfig } from '@/configs/chain';
 
 interface WalletContextValues extends Omit<RegistryInterface, 'initialize' | 'activeAdapter'> {
-  chainConfig?: ChainConfig
+  chainConfig?: ChainConfig;
 }
 
 const WalletContext = createContext<WalletContextValues | null>(null);

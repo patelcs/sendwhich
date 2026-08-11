@@ -10,7 +10,7 @@ import { WalletConnection } from '../wallet';
 
 function isActive(pathname: string, href: string) {
   if (href == '/') return pathname === href;
-  return pathname.includes(href)
+  return pathname.includes(href);
 }
 
 export default function Navbar() {
@@ -21,7 +21,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={'sticky top-0 z-50 md:border-b md:border-(--navbar-border) md:bg-(--navbar-background)'}>
+      <nav className={'sticky top-0 z-50 border-b border-(--navbar-border) bg-(--navbar-background)'}>
         <div className="flex h-16 w-full items-center px-4 sm:px-6 lg:px-8">
           {showBrandInTopNavbar && (
             <Link href="/" className="flex items-center gap-2 text-lg font-bold text-(--navbar-foreground)">
@@ -37,10 +37,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${isActive(pathname, link.href)
-                  ? 'bg-(--brand)/10 text-(--brand)'
-                  : 'text-(--navbar-muted) hover:bg-(--navbar-accent) hover:text-(--navbar-foreground)'
-                  }`}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive(pathname, link.href)
+                    ? 'bg-(--brand)/10 text-(--brand)'
+                    : 'text-(--navbar-muted) hover:bg-(--navbar-accent) hover:text-(--navbar-foreground)'
+                }`}
               >
                 {link.label}
               </Link>
@@ -137,8 +138,9 @@ export default function Navbar() {
                 key={href}
                 href={href}
                 aria-current={_isActive ? 'page' : undefined}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${_isActive ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
-                  }`}
+                className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
+                  _isActive ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
+                }`}
               >
                 <Icon size={20} aria-hidden="true" />
                 <span className="truncate">{label}</span>
@@ -150,8 +152,9 @@ export default function Navbar() {
             onClick={() => setMoreOpen((open) => !open)}
             aria-expanded={moreOpen}
             aria-controls="mobile-more-menu"
-            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${moreOpen ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
-              }`}
+            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
+              moreOpen ? 'text-(--brand)' : 'text-(--navbar-muted) hover:text-(--navbar-foreground)'
+            }`}
           >
             <MoreHorizontal size={20} aria-hidden="true" />
             <span>More</span>

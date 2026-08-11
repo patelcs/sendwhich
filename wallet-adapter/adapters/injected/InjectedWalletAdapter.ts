@@ -141,7 +141,7 @@ export class InjectedWalletAdapter extends WalletAdapter {
       } else {
         console.error('switch chain error:', error);
         this.updateStatus(oldStatus);
-      };
+      }
     }
     this._client = createWalletClient({
       chain,

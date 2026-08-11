@@ -1,10 +1,21 @@
+import { TokenAddress } from '@/address-book';
 import type { Chain, Address } from 'viem';
 
-export interface ChainAddresses {
-  multiSender?: Address;
+export interface ContractAddresses {
+  multiSender?: {
+    name: 'Multi Sender';
+    address: Address;
+    icon?: string;
+  };
+}
+
+export interface TokenAddressWithIcon extends Omit<TokenAddress, 'chainId'> {
+  icon?: string;
 }
 
 export interface ChainConfig {
   chain: Chain;
-  addresses: ChainAddresses;
+  rpcUrls: string[];
+  contracts: ContractAddresses;
+  tokens: TokenAddressWithIcon[];
 }

@@ -1,10 +1,7 @@
-"use client"
+'use client';
 
-import { useWallet } from "@/providers/WalletProvider";
-
-function formatAddress(account: string) {
-  return `${account.slice(0, 6)}…${account.slice(-4)}`;
-}
+import { useWallet } from '@/providers/WalletProvider';
+import { formatAddress } from '@/lib/format';
 
 export default function DashBoard() {
   const { chainConfig } = useWallet();
@@ -12,7 +9,9 @@ export default function DashBoard() {
     <>
       <h1>{chainConfig?.chain.name}</h1>
       <h2>{chainConfig?.chain.id}</h2>
-      <h3>MultiSender: {chainConfig?.addresses.multiSender && formatAddress(chainConfig.addresses.multiSender)}</h3>
+      <h3>
+        MultiSender: {chainConfig?.contracts.multiSender && formatAddress(chainConfig.contracts.multiSender.address)}
+      </h3>
     </>
   );
 }

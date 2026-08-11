@@ -7,6 +7,6 @@ export function createWalletRegistry() {
     const miniKitAdapter = new MiniKitAdapter(env.miniAppId);
     return new WalletRegistry([miniKitAdapter]);
   }
-  const injectedWalletAdapter = new InjectedWalletAdapter(BROWSER_CHAIN_CONFIGS.map(c => c.chain));
+  const injectedWalletAdapter = new InjectedWalletAdapter(BROWSER_CHAIN_CONFIGS.map((c) => c.chain));
   return new WalletRegistry([injectedWalletAdapter]);
 }
