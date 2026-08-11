@@ -19,6 +19,7 @@ export interface RouteConfig {
   navLinksMobile: MobileNavigationLink[];
   navLinksMobileMore: MoreNavigationSection[];
   settingLinks: MobileNavigationLink[];
+  addressBookLinks: MobileNavigationLink[];
 }
 export interface AdapterConfigs {
   routes: RouteConfig;
