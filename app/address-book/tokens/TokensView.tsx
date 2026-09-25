@@ -80,7 +80,7 @@ export default function TokensView() {
               <img
                 src="/badge-default.svg"
                 alt="Default"
-                className="absolute -right-1 -bottom-1 size-6 rounded-full border border-(--card)"
+                className="absolute -right-1 -bottom-1 size-5 rounded-full border border-(--card)"
               />
             ) : undefined
           }

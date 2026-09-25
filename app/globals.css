@@ -4,50 +4,42 @@
 @custom-variant dark (&:is([data-theme='dark'] *));
 
 :root {
-  /* Light theme is temporarily set to match the dark theme 1:1 until the
-     real light theme is designed. The previous light values (now unused)
-     are kept here, commented out, so the light theme can be restored later:
-     --background: #e4e8ee;
-     --card: #f1f4f8;
-     --foreground: #0f172a;
-     --muted: #64748b;
-     --border: #cbd3de;
-     --accent: #dee3ea;
-     --input-bg: #eaeef3;
-  */
-  --background: #0a0e17;
-  --card: #111827;
-  --foreground: #f1f5f9;
-  --muted: #94a3b8;
-  --border: #1e293b;
-  --accent: #1e293b;
-  --input-bg: #1e293b;
-  --brand: #3b82f6;
-  --brand-secondary: #a855f7;
+  --background: #f5f3ee;
+  --card: #ffffff;
+  --foreground: #17151f;
+  --muted: #6d6875;
+  --border: #1c1a151a;
+  --accent: #efece4;
+  --input-bg: #efece4;
+  --brand: #7c3aed;
+  --brand-foreground: #ffffff;
+  --brand-secondary: #b8f23a;
   --danger: #ef4444;
   --ring: var(--brand);
   --radius: 0.625rem;
+  --dots: #1c1a1512;
 
   /* The navbar and bottom bar are always dark, in both themes, so their
      colors are defined once here and never overridden. */
-  --navbar-background: #111827;
-  --navbar-foreground: #f1f5f9;
-  --navbar-muted: #94a3b8;
-  --navbar-accent: #1e293b;
-  --navbar-border: #1e293b;
-  --bottom-bar: #111827;
-  --icon-muted: #9ca3af;
-  --icon-muted-hover: #d1d5db;
+  --navbar-background: #15121f;
+  --navbar-foreground: #efedf5;
+  --navbar-muted: #9d97ad;
+  --navbar-accent: #1f1a2d;
+  --navbar-border: #ffffff17;
+  --bottom-bar: #15121f;
+  --icon-muted: #9d97ad;
+  --icon-muted-hover: #efedf5;
 }
 
 [data-theme='dark'] {
-  --background: #0a0e17;
-  --card: #111827;
-  --foreground: #f1f5f9;
-  --muted: #94a3b8;
-  --border: #1e293b;
-  --accent: #1e293b;
-  --input-bg: #1e293b;
+  --background: #0c0a14;
+  --card: #15121f;
+  --foreground: #efedf5;
+  --muted: #9d97ad;
+  --border: #ffffff17;
+  --accent: #1f1a2d;
+  --input-bg: #1f1a2d;
+  --dots: #ffffff0d;
 }
 
 * {
@@ -105,7 +97,10 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background:
+      radial-gradient(var(--dots) 1.2px, transparent 1.2px) 0 0 / 18px 18px,
+      var(--background);
   }
   html {
     @apply font-sans;

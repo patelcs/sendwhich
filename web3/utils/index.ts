@@ -1,2 +1,2 @@
 export * from './resolveAddress';
-export * from './tokenInfo';
+export * from './ERC20Utils';

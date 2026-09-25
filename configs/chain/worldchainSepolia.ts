@@ -11,7 +11,6 @@ export const WORLDCHAIN_SEPOLIA_CONTRACTS: ContractAddresses = {
 export const WORLDCHAIN_SEPOLIA_RPCS = [
   'https://worldchain-sepolia.g.alchemy.com/public',
   'https://worldchain-sepolia.gateway.tenderly.co',
-  'https://4801.rpc.thirdweb.com',
 ];
 
 export const WORLDCHAIN_SEPOLIA_TOKENS: TokenAddressWithIcon[] = [

@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cls && next dev -p 3000",
     "build": "next build",
     "start": "next start",
+    "start:miniapp": "cls && dotenvx run -f .env.miniapp -o -- next build && cls && dotenvx run -f .env.miniapp -o -- next start -p 3001",
+    "tunnel:miniapp": "ssh srv.us -R 1:localhost:3001",
     "lint": "eslint",
     "format": "prettier --write **/*.{js,jsx,ts,tsx,json,css,md}",
     "format:check": "prettier --check **/*.{js,jsx,ts,tsx,json,css,md}"
@@ -28,6 +30,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.75.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

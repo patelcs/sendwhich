@@ -10,7 +10,6 @@ export const WORLDCHAIN_CONTRACTS: ContractAddresses = {
 
 export const WORLDCHAIN_RPCS = [
   'https://worldchain-mainnet.g.alchemy.com/public',
-  'https://worldchain.drpc.org',
   'https://worldchain-mainnet.gateway.tenderly.co',
 ];
 
@@ -21,6 +20,19 @@ export const WORLDCHAIN_TOKENS: TokenAddressWithIcon[] = [
     decimals: 6,
     address: '0x79A02482A880bCE3F13e09Da970dC34db4CD24d1',
     icon: 'https://etherscan.io/token/images/usdc_ofc_32.svg',
+  },
+  {
+    name: 'DNAToken',
+    symbol: 'DNA',
+    decimals: 18,
+    address: '0xED49fE44fD4249A09843C2Ba4bba7e50BECa7113',
+  },
+  {
+    name: 'Worldcoin',
+    symbol: 'WLD',
+    decimals: 18,
+    address: '0x2cFc85d8E48F8EAB294be644d9E25C3030863003',
+    icon: 'https://worldscan.org/token/images/worldcoin_ofc_32.png',
   },
 ];
 

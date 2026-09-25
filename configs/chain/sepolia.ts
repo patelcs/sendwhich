@@ -8,11 +8,7 @@ export const SEPOLIA_CONTRACTS: ContractAddresses = {
   },
 } as const;
 
-export const SEPOLIA_RPCS = [
-  'https://sepolia.gateway.tenderly.co',
-  'https://ethereum-sepolia.gateway.tatum.io',
-  'https://ethereum-sepolia-rpc.publicnode.com',
-];
+export const SEPOLIA_RPCS = ['https://sepolia.gateway.tenderly.co'];
 
 export const SEPOLIA_TOKENS: TokenAddressWithIcon[] = [
   {

@@ -6,8 +6,6 @@ import type { LucideIcon } from 'lucide-react';
 
 const COPIED_FEEDBACK_MS = 1500;
 
-const LONG_PRESS_MS = 500;
-
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -77,8 +75,6 @@ export default function SelectableList<T>({
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const longPressTimer = useRef<number | null>(null);
-  const longPressFired = useRef(false);
   const copiedTimer = useRef<number | null>(null);
 
   const isSelecting = selected.size > 0;
@@ -164,27 +160,7 @@ export default function SelectableList<T>({
       .catch(() => {});
   }
 
-  function startLongPress(id: string) {
-    longPressFired.current = false;
-    longPressTimer.current = window.setTimeout(() => {
-      longPressFired.current = true;
-      setExpandedId(null);
-      setSelected((prev) => new Set(prev).add(id));
-    }, LONG_PRESS_MS);
-  }
-
-  function cancelLongPress() {
-    if (longPressTimer.current !== null) {
-      window.clearTimeout(longPressTimer.current);
-      longPressTimer.current = null;
-    }
-  }
-
   function handleRowActivate(item: T) {
-    if (longPressFired.current) {
-      longPressFired.current = false;
-      return;
-    }
     const id = getId(item);
     if (isSelecting) {
       toggleSelected(id);
@@ -195,15 +171,12 @@ export default function SelectableList<T>({
 
   function handleIconClick(event: React.MouseEvent, item: T) {
     event.stopPropagation();
-    if (longPressFired.current) {
-      longPressFired.current = false;
-      return;
-    }
     toggleSelected(getId(item));
   }
 
   const allFilteredSelected = filteredItems.length > 0 && filteredItems.every((item) => selected.has(getId(item)));
   const showSelectedGroup = isSelecting && selectedItemsList.length > 0;
+  const visibleItems = showSelectedGroup && !isSelectedWrapped ? [...selectedItemsList, ...restItems] : restItems;
 
   function renderActionButtons(item: T, id: string) {
     const readOnly = isReadOnly?.(item) ?? false;
@@ -254,22 +227,24 @@ export default function SelectableList<T>({
     );
   }
 
-  function renderItemRow(item: T) {
+  function renderItemRow(item: T, isFirst: boolean, isLast: boolean) {
     const id = getId(item);
     const isSelected = selected.has(id);
     const isExpanded = expandedId === id;
     const label = getLabel(item);
+    const iconNode = renderIcon?.(item);
 
     return (
-      <>
+      <div
+        className={`rounded-xs px-2 pt-3.5 transition-colors select-none ${
+          isSelected ? 'bg-(--brand)/10' : 'bg-(--card)/60 hover:bg-(--accent)/40'
+        } ${isFirst ? 'rounded-t-xl' : ''} ${isLast ? 'rounded-b-xl' : ''} ${
+          isExpanded && !isSelecting ? 'pb-2' : 'pb-3.5'
+        }`}
+      >
         <div
           role="button"
           tabIndex={0}
-          onPointerDown={() => startLongPress(id)}
-          onPointerUp={cancelLongPress}
-          onPointerLeave={cancelLongPress}
-          onPointerCancel={cancelLongPress}
-          onContextMenu={(event) => event.preventDefault()}
           onClick={() => handleRowActivate(item)}
           onKeyDown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {
@@ -277,24 +252,28 @@ export default function SelectableList<T>({
               handleRowActivate(item);
             }
           }}
-          className={`relative flex cursor-pointer items-center gap-3 rounded-lg px-2 py-3.5 transition-colors select-none ${
-            isSelected ? 'bg-(--brand)/5' : 'hover:bg-(--accent)/40'
-          }`}
+          className="relative flex cursor-pointer items-start gap-3"
         >
           <button
             type="button"
             onClick={(event) => handleIconClick(event, item)}
             aria-label={isSelected ? `Deselect ${label}` : `Select ${label}`}
-            className={`relative flex size-12 shrink-0 items-center justify-center rounded-full transition-colors ${
-              isSelected
-                ? 'border border-(--brand)/40 bg-(--brand)/10 text-(--brand)'
-                : isSelecting
-                  ? 'border border-(--border) text-(--muted)'
-                  : 'bg-(--accent) text-(--muted)'
-            }`}
+            className="relative size-10 shrink-0 perspective-[600px]"
           >
-            {renderIcon?.(item) ?? <Icon size={20} aria-hidden="true" />}
-            {renderBadge?.(item)}
+            <div
+              className={`relative size-full transform-3d transition-transform duration-300 ease-in-out ${isSelected ? 'rotate-y-180' : ''}`}
+            >
+              <div
+                className={`absolute inset-0 flex items-center justify-center rounded-full backface-hidden transition-colors ${!iconNode ? 'bg-(--accent) text-(--muted)' : ''}`}
+              >
+                {iconNode ?? <Icon size={18} aria-hidden="true" />}
+                {renderBadge?.(item)}
+              </div>
+
+              <div className="absolute inset-0 flex rotate-y-180 items-center justify-center rounded-full bg-(--brand) backface-hidden">
+                <Check size={18} className="text-(--brand-foreground)" aria-hidden="true" />
+              </div>
+            </div>
           </button>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-(--foreground)">{getPrimary(item, query)}</p>
@@ -303,24 +282,12 @@ export default function SelectableList<T>({
               {getSecondary(item, query)}
             </p>
           </div>
-
-          {!isSelecting && (
-            <div className="hidden shrink-0 items-center gap-1 md:flex">{renderActionButtons(item, id)}</div>
-          )}
-
-          {isSelecting && isSelected && (
-            <div className="absolute top-1/2 right-2 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border-2 border-(--card) bg-(--brand) text-(--navbar-foreground)">
-              <Check size={14} aria-hidden="true" />
-            </div>
-          )}
         </div>
 
         {isExpanded && !isSelecting && (
-          <div className="flex items-center justify-end gap-2 px-2 pt-1 pb-3.5 md:hidden">
-            {renderActionButtons(item, id)}
-          </div>
+          <div className="mt-2 flex items-center justify-end gap-1">{renderActionButtons(item, id)}</div>
         )}
-      </>
+      </div>
     );
   }
 
@@ -463,29 +430,13 @@ export default function SelectableList<T>({
 
       {showSelectedGroup && <div className="shrink-0">{renderSelectedCountRow()}</div>}
 
-      <div className="themed-scrollbar min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-transparent">
+      <div className="themed-scrollbar flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden bg-transparent">
         {!showSelectedGroup && restItems.length === 0 ? (
           <p className="py-8 text-center text-sm text-(--muted)">{emptyLabel}</p>
         ) : (
-          <>
-            {showSelectedGroup &&
-              !isSelectedWrapped &&
-              selectedItemsList.map((item, index) => (
-                <div key={getId(item)}>
-                  {renderItemRow(item)}
-                  {(index !== selectedItemsList.length - 1 || restItems.length > 0) && (
-                    <div className="border-b border-(--border)" />
-                  )}
-                </div>
-              ))}
-
-            {restItems.map((item, index) => (
-              <div key={getId(item)}>
-                {renderItemRow(item)}
-                {index !== restItems.length - 1 && <div className="border-b border-(--border)" />}
-              </div>
-            ))}
-          </>
+          visibleItems.map((item, index) => (
+            <div key={getId(item)}>{renderItemRow(item, index === 0, index === visibleItems.length - 1)}</div>
+          ))
         )}
       </div>
     </>

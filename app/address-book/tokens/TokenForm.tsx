@@ -9,7 +9,7 @@ import { AddressField } from '@/components/form';
 import { ChainField } from '@/components/form/ChainField';
 import { FormLayout } from '@/components/form/FormLayout';
 import { useWallet } from '@/providers/WalletProvider';
-import { getTokenInfo, resolveAddress } from '@/web3/utils';
+import { ERC20Utils, resolveAddress } from '@/web3/utils';
 import {
   Dialog,
   DialogContent,
@@ -199,7 +199,10 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
 
       try {
         const resolvedAddress = await resolveAddress(trimmedAddress);
-        const [name, symbol, decimals] = await getTokenInfo(resolvedAddress as `0x${string}`, watchedChainId);
+        const [name, symbol, decimals] = await ERC20Utils.getInfo({
+          address: resolvedAddress as `0x${string}`,
+          chainId: watchedChainId,
+        });
         if (cancelled || form.formState.isSubmitting) return;
 
         const onChainValues: OnChainValues = {
@@ -269,7 +272,10 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
 
     let onChainValues: OnChainValues;
     try {
-      const [name, symbol, decimals] = await getTokenInfo(resolvedAddress as `0x${string}`, data.chainId);
+      const [name, symbol, decimals] = await ERC20Utils.getInfo({
+        address: resolvedAddress as `0x${string}`,
+        chainId: data.chainId,
+      });
       onChainValues = { name: String(name), symbol: String(symbol), decimals: String(decimals) };
     } catch {
       setUnverifiedToken(data);

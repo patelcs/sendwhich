@@ -3,11 +3,7 @@ import { ContractAddresses, ChainConfig, TokenAddressWithIcon } from './types';
 
 export const MAINNET_CONTRACTS: ContractAddresses = {} as const;
 
-export const MAINNET_RPCS = [
-  'https://eth-mainnet.g.alchemy.com/public',
-  'https://eth.drpc.org',
-  'https://mainnet.gateway.tenderly.co',
-];
+export const MAINNET_RPCS = ['https://eth-mainnet.g.alchemy.com/public', 'https://mainnet.gateway.tenderly.co'];
 
 export const MAINNET_TOKENS: TokenAddressWithIcon[] = [
   {

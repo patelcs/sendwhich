@@ -14,7 +14,7 @@ export async function resolveShortAddress(address: Address): Promise<Address> {
 export async function resolveEnsAddress(address: Address): Promise<Address> {
   if (!address.endsWith('.eth')) throw new Error(`Invalid address: ${address}`);
 
-  const publicClient = await getPublicClient(1);
+  const publicClient = getPublicClient({ chainId: 1 });
   const resolvedEns = await publicClient.getEnsAddress({
     name: address.trim().toLowerCase(),
   });

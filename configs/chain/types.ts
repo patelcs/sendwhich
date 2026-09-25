@@ -10,6 +10,7 @@ export interface ContractAddresses {
 }
 
 export interface TokenAddressWithIcon extends Omit<TokenAddress, 'chainId'> {
+  address: Address;
   icon?: string;
 }
 
