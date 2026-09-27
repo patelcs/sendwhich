@@ -7,7 +7,7 @@ import { WalletAddressSchema, type WalletAddress } from '@/address-book';
 import { AddressField } from '@/components/form';
 import { InputField } from '@/components/form/InputField';
 import { FormLayout } from '@/components/form/FormLayout';
-import { resolveAddress } from '@/web3/utils';
+import { resolveAddress } from '@/web3/address';
 
 interface WalletFormProps {
   entry?: WalletAddress;

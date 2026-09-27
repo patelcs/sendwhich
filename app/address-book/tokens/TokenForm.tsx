@@ -9,7 +9,8 @@ import { AddressField } from '@/components/form';
 import { ChainField } from '@/components/form/ChainField';
 import { FormLayout } from '@/components/form/FormLayout';
 import { useWallet } from '@/providers/WalletProvider';
-import { ERC20Utils, resolveAddress } from '@/web3/utils';
+import { resolveAddress } from '@/web3/address';
+import { getInfo } from '@/web3/ERC20';
 import {
   Dialog,
   DialogContent,
@@ -199,7 +200,7 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
 
       try {
         const resolvedAddress = await resolveAddress(trimmedAddress);
-        const [name, symbol, decimals] = await ERC20Utils.getInfo({
+        const [name, symbol, decimals] = await getInfo({
           address: resolvedAddress as `0x${string}`,
           chainId: watchedChainId,
         });
@@ -272,7 +273,7 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
 
     let onChainValues: OnChainValues;
     try {
-      const [name, symbol, decimals] = await ERC20Utils.getInfo({
+      const [name, symbol, decimals] = await getInfo({
         address: resolvedAddress as `0x${string}`,
         chainId: data.chainId,
       });

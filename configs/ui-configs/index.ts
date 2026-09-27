@@ -1,3 +1,5 @@
+export * from './general';
+
 import { env } from '../env';
 import { BROWSER_CONFIGS } from './browser';
 import { MINIKIT_CONFIGS } from './minikit';

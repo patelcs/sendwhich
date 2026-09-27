@@ -9,7 +9,7 @@ import { AddressField } from '@/components/form';
 import { ChainField } from '@/components/form/ChainField';
 import { FormLayout } from '@/components/form/FormLayout';
 import { useWallet } from '@/providers/WalletProvider';
-import { resolveAddress } from '@/web3/utils';
+import { resolveAddress } from '@/web3/address';
 import { getAllChains } from '@/configs/chain';
 
 interface ContractFormValues {
