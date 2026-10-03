@@ -1,4 +1,11 @@
-import { formatUnits, ReadContractReturnType } from 'viem';
+import {
+  BaseError,
+  formatUnits,
+  HttpRequestError,
+  ReadContractReturnType,
+  RpcRequestError,
+  TimeoutError,
+} from 'viem';
 import { getPublicClient, PublicClientOptions, ReadContractFunctionArgs } from '../public-client';
 import { Address } from '@/wallet-adapter';
 import { ERC20_ABI } from './ERC20_ABI';
@@ -56,12 +63,36 @@ export async function read<
   ...pcOptions
 }: ERC20ReadArgs<TFunctionName, TFunctionArgs>): Promise<ERC20ReadContractReturnType<TFunctionName, TFunctionArgs>> {
   const publicClient = getPublicClient(pcOptions);
-  return await publicClient.readContract({
-    address,
-    abi: ERC20_ABI,
-    functionName,
-    args,
-  });
+  try {
+    return await publicClient.readContract({
+      address,
+      abi: ERC20_ABI,
+      functionName,
+      args,
+    });
+  } catch (error) {
+    const rpcError = isRpcError(error);
+    console.error(`[ERC20] ${functionName} failed (${rpcError ? 'RPC/network' : 'contract/other'} error)`, {
+      chainId: pcOptions.chainId,
+      rpcUrl: (publicClient.transport as { url?: string }).url,
+      token: address,
+      functionName,
+      args,
+      errorName: error instanceof BaseError ? error.name : undefined,
+      shortMessage: error instanceof BaseError ? error.shortMessage : String(error),
+      details: error instanceof BaseError ? error.details : undefined,
+      error,
+    });
+    throw error;
+  }
+}
+
+/** True when the failure came from the transport/RPC node rather than the contract itself. */
+export function isRpcError(error: unknown): boolean {
+  if (!(error instanceof BaseError)) return false;
+  return !!error.walk(
+    (e) => e instanceof HttpRequestError || e instanceof TimeoutError || e instanceof RpcRequestError,
+  );
 }
 
 export async function getName(args: ERC20Args) {

@@ -5,12 +5,12 @@ import type { CommandResultByVia, MiniKitWalletAuthOptions, WalletAuthResult } f
 import { worldchain } from 'viem/chains';
 
 export class MiniKitAdapter extends WalletAdapter {
-  private _installSuccess: boolean;
+  private _appId?: string;
+  private _installed = false;
 
   constructor(appId?: string) {
     super([worldchain]);
-    const { success } = MiniKit.install(appId);
-    this._installSuccess = success;
+    this._appId = appId;
   }
 
   get id(): AdapterId {
@@ -22,10 +22,20 @@ export class MiniKitAdapter extends WalletAdapter {
   }
 
   get isMinikitEnvironment() {
-    return this._installSuccess;
+    return this._installed;
+  }
+
+  private install() {
+    if (this._installed) return;
+    const result = MiniKit.install(this._appId);
+    this._installed = result.success || result.errorCode === 'app_out_of_date';
+    if (!result.success) console.warn('MiniKit install:', result.errorCode, result.errorMessage);
   }
 
   async initialize() {
+    // Load the debug console first so it's available even if MiniKit setup fails
+    await initializeEruda().catch((error) => console.error('eruda initialization error:', error));
+    this.install();
     if (!this.isMinikitEnvironment) throw new Error('Not in MiniApp Environment');
     if (this.adapterOptions.length === 1) return;
     try {
@@ -35,7 +45,6 @@ export class MiniKitAdapter extends WalletAdapter {
         icon: '',
       });
       this.updateChain(worldchain.id);
-      await initializeEruda();
     } catch (error) {
       console.error('initialization error:', error);
     }

@@ -1,26 +1,25 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@custom-variant dark (&:is([data-theme='dark'] *));
 
+/* The app has a single (dark) theme. */
 :root {
-  --background: #f5f3ee;
-  --card: #ffffff;
-  --foreground: #17151f;
-  --muted: #6d6875;
-  --border: #1c1a151a;
-  --accent: #efece4;
-  --input-bg: #efece4;
+  color-scheme: dark;
+  --background: #0c0a14;
+  --card: #15121f;
+  --foreground: #efedf5;
+  --muted: #9d97ad;
+  --border: #ffffff17;
+  --accent: #1f1a2d;
+  --input-bg: #1f1a2d;
   --brand: #7c3aed;
   --brand-foreground: #ffffff;
   --brand-secondary: #b8f23a;
   --danger: #ef4444;
   --ring: var(--brand);
   --radius: 0.625rem;
-  --dots: #1c1a1512;
+  --dots: #ffffff0d;
 
-  /* The navbar and bottom bar are always dark, in both themes, so their
-     colors are defined once here and never overridden. */
   --navbar-background: #15121f;
   --navbar-foreground: #efedf5;
   --navbar-muted: #9d97ad;
@@ -29,17 +28,6 @@
   --bottom-bar: #15121f;
   --icon-muted: #9d97ad;
   --icon-muted-hover: #efedf5;
-}
-
-[data-theme='dark'] {
-  --background: #0c0a14;
-  --card: #15121f;
-  --foreground: #efedf5;
-  --muted: #9d97ad;
-  --border: #ffffff17;
-  --accent: #1f1a2d;
-  --input-bg: #1f1a2d;
-  --dots: #ffffff0d;
 }
 
 * {

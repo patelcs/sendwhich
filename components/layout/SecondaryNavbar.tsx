@@ -18,7 +18,7 @@ export default function SecondaryNavbar({
       <aside className="hidden md:block md:w-56 md:shrink-0">
         <nav aria-label="Settings sections" className="space-y-1">
           {subRoutes.map(({ href, label, icon: Icon }) => {
-            const isActive = pathname === href;
+            const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
             return (
               <Link

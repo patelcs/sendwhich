@@ -1,5 +1,5 @@
 import { sepolia } from 'viem/chains';
-import { ContractAddresses, ChainConfig, TokenAddressWithIcon } from './types';
+import { ContractAddresses, ChainConfig, TokenAddress } from './types';
 
 export const SEPOLIA_CONTRACTS: ContractAddresses = {
   multiSender: {
@@ -10,13 +10,13 @@ export const SEPOLIA_CONTRACTS: ContractAddresses = {
 
 export const SEPOLIA_RPCS = ['https://sepolia.gateway.tenderly.co'];
 
-export const SEPOLIA_TOKENS: TokenAddressWithIcon[] = [
+export const SEPOLIA_TOKENS: TokenAddress[] = [
   {
     name: 'USDC',
     symbol: 'USDC',
     decimals: 6,
     address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
-    icon: 'https://etherscan.io/token/images/usdc_ofc_32.svg',
+    logo: 'https://etherscan.io/token/images/usdc_ofc_32.svg',
   },
 ];
 
@@ -25,4 +25,5 @@ export const SEPOLIA_CONFIGS: ChainConfig = {
   rpcUrls: SEPOLIA_RPCS,
   contracts: SEPOLIA_CONTRACTS,
   tokens: SEPOLIA_TOKENS,
+  logo: '/logo/ethereum.png',
 } as const;

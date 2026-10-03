@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Moon, MoreHorizontal, Sun, Zap } from 'lucide-react';
-import { useTheme } from '@/providers/ThemeProvider';
+import { MoreHorizontal, Zap } from 'lucide-react';
 import { uiConfigs } from '@/configs';
 import { WalletConnection } from '../wallet';
 
@@ -16,7 +15,6 @@ function isActive(pathname: string, href: string) {
 export default function Navbar() {
   const { showBrandInTopNavbar, routes } = uiConfigs;
   const [moreOpen, setMoreOpen] = useState(false);
-  const { theme, toggle } = useTheme();
   const pathname = usePathname();
 
   return (
@@ -49,16 +47,6 @@ export default function Navbar() {
           </div>
 
           <div className="ml-auto flex min-w-0 items-center gap-2 sm:gap-3">
-            {/* Theme button temporarily disabled — light theme isn't ready yet.
-            <button
-            type="button"
-            onClick={toggle}
-            className="flex items-center justify-center p-2 text-(--icon-muted) transition-colors hover:text-(--icon-muted-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand)"
-            aria-label="Toggle theme"
-            >
-            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
-            */}
             <WalletConnection />
           </div>
         </div>

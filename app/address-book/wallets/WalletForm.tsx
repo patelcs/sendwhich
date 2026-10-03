@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useAddressBook } from '@/address-book/AddressBookProvider';
 import { WalletAddressSchema, type WalletAddress } from '@/address-book';
@@ -11,11 +12,14 @@ import { resolveAddress } from '@/web3/address';
 
 interface WalletFormProps {
   entry?: WalletAddress;
-  onDone: () => void;
-  onCancel: () => void;
+  onDone?: () => void;
+  onCancel?: () => void;
 }
 
 export default function WalletForm({ entry, onDone, onCancel }: WalletFormProps) {
+  const router = useRouter();
+  // Standalone form pages fall back to returning to the list.
+  const backToList = () => router.replace('/address-book/wallets');
   const { addWalletAddress, updateWalletAddress } = useAddressBook();
   const [error, setError] = useState<string | null>(null);
   const isEdit = entry !== undefined;
@@ -47,7 +51,7 @@ export default function WalletForm({ entry, onDone, onCancel }: WalletFormProps)
       } else {
         addWalletAddress(result.data);
       }
-      onDone();
+      (onDone ?? backToList)();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     }
@@ -57,7 +61,7 @@ export default function WalletForm({ entry, onDone, onCancel }: WalletFormProps)
     <FormLayout
       title={isEdit ? 'Edit wallet' : 'Add wallet'}
       onSubmit={form.handleSubmit(handleSubmit)}
-      onCancel={onCancel}
+      onCancel={onCancel ?? backToList}
       error={error}
       isSaving={form.formState.isSubmitting}
     >

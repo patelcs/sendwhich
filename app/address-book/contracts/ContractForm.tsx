@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { useAddressBook } from '@/address-book/AddressBookProvider';
 import { ContractAddressSchema, type ContractAddress } from '@/address-book';
@@ -10,7 +11,7 @@ import { ChainField } from '@/components/form/ChainField';
 import { FormLayout } from '@/components/form/FormLayout';
 import { useWallet } from '@/providers/WalletProvider';
 import { resolveAddress } from '@/web3/address';
-import { getAllChains } from '@/configs/chain';
+import { getAllChainConfigs } from '@/configs/chain';
 
 interface ContractFormValues {
   name: string;
@@ -20,15 +21,18 @@ interface ContractFormValues {
 
 interface ContractFormProps {
   entry?: ContractAddress;
-  onDone: () => void;
-  onCancel: () => void;
+  onDone?: () => void;
+  onCancel?: () => void;
 }
 
 export default function ContractForm({ entry, onDone, onCancel }: ContractFormProps) {
+  const router = useRouter();
+  // Standalone form pages fall back to returning to the list.
+  const backToList = () => router.replace('/address-book/contracts');
   const { addContractAddress, updateContractAddress } = useAddressBook();
   const { chainId } = useWallet();
   const [error, setError] = useState<string | null>(null);
-  const allChains = useMemo(() => getAllChains().map(({ chain }) => chain), []);
+  const allChains = useMemo(() => getAllChainConfigs().map(({ chain }) => chain), []);
   const isEdit = entry !== undefined;
 
   const form = useForm<ContractFormValues>({
@@ -64,11 +68,11 @@ export default function ContractForm({ entry, onDone, onCancel }: ContractFormPr
 
     try {
       if (isEdit) {
-        updateContractAddress(entry.address, entry.chainId, result.data);
+        updateContractAddress(entry.id, result.data);
       } else {
         addContractAddress(result.data);
       }
-      onDone();
+      (onDone ?? backToList)();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     }
@@ -78,7 +82,7 @@ export default function ContractForm({ entry, onDone, onCancel }: ContractFormPr
     <FormLayout
       title={isEdit ? 'Edit contract' : 'Add contract'}
       onSubmit={form.handleSubmit(handleSubmit)}
-      onCancel={onCancel}
+      onCancel={onCancel ?? backToList}
       error={error}
       isSaving={form.formState.isSubmitting}
     >

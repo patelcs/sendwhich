@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useAddressBook } from '@/address-book/AddressBookProvider';
 import { TokenAddressSchema, type TokenAddress } from '@/address-book';
@@ -22,7 +23,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { getAllChains } from '@/configs/chain';
+import { getAllChainConfigs } from '@/configs/chain';
 
 interface TokenFormValues {
   name: string;
@@ -34,8 +35,8 @@ interface TokenFormValues {
 
 interface TokenFormProps {
   entry?: TokenAddress;
-  onDone: () => void;
-  onCancel: () => void;
+  onDone?: () => void;
+  onCancel?: () => void;
 }
 
 const AUTO_FILL_DEBOUNCE_MS = 600;
@@ -166,6 +167,9 @@ function FieldConflictPicker({
 }
 
 export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
+  const router = useRouter();
+  // Standalone form pages fall back to returning to the list.
+  const backToList = () => router.replace('/address-book/tokens');
   const { addTokenAddress, updateTokenAddress } = useAddressBook();
   const { chainId } = useWallet();
   const [error, setError] = useState<string | null>(null);
@@ -173,7 +177,7 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
   const [saveConflict, setSaveConflict] = useState<{ data: TokenFormValues; conflict: FieldConflict } | null>(null);
   const [selectedConflictSource, setSelectedConflictSource] = useState<ConflictSource>('onchain');
   const [unverifiedToken, setUnverifiedToken] = useState<TokenFormValues | null>(null);
-  const allChains = useMemo(() => getAllChains().map(({ chain }) => chain), []);
+  const allChains = useMemo(() => getAllChainConfigs().map(({ chain }) => chain), []);
   const isEdit = entry !== undefined;
 
   const form = useForm<TokenFormValues>({
@@ -247,11 +251,11 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
 
     try {
       if (isEdit) {
-        updateTokenAddress(entry.address, entry.chainId, result.data);
+        updateTokenAddress(entry.id, result.data);
       } else {
         addTokenAddress(result.data);
       }
-      onDone();
+      (onDone ?? backToList)();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     }
@@ -339,7 +343,7 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
       <FormLayout
         title={isEdit ? 'Edit token' : 'Add token'}
         onSubmit={form.handleSubmit(handleSubmit)}
-        onCancel={onCancel}
+        onCancel={onCancel ?? backToList}
         error={error}
         isSaving={form.formState.isSubmitting}
       >

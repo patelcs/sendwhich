@@ -1,5 +1,5 @@
 import { worldchainSepolia } from 'viem/chains';
-import { ContractAddresses, ChainConfig, TokenAddressWithIcon } from './types';
+import { ContractAddresses, ChainConfig, TokenAddress } from './types';
 
 export const WORLDCHAIN_SEPOLIA_CONTRACTS: ContractAddresses = {
   multiSender: {
@@ -10,16 +10,15 @@ export const WORLDCHAIN_SEPOLIA_CONTRACTS: ContractAddresses = {
 
 export const WORLDCHAIN_SEPOLIA_RPCS = [
   'https://worldchain-sepolia.g.alchemy.com/public',
-  'https://worldchain-sepolia.gateway.tenderly.co',
 ];
 
-export const WORLDCHAIN_SEPOLIA_TOKENS: TokenAddressWithIcon[] = [
+export const WORLDCHAIN_SEPOLIA_TOKENS: TokenAddress[] = [
   {
     name: 'Bridged USDC',
     symbol: 'USDC.e',
     decimals: 6,
     address: '0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88',
-    icon: 'https://etherscan.io/token/images/usdc_ofc_32.svg',
+    logo: 'https://etherscan.io/token/images/usdc_ofc_32.svg',
   },
 ];
 
@@ -28,4 +27,5 @@ export const WORLDCHAIN_SEPOLIA_CONFIGS: ChainConfig = {
   rpcUrls: WORLDCHAIN_SEPOLIA_RPCS,
   contracts: WORLDCHAIN_SEPOLIA_CONTRACTS,
   tokens: WORLDCHAIN_SEPOLIA_TOKENS,
+  logo: '/logo/worldchain.jpeg',
 } as const;

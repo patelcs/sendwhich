@@ -1,4 +1,3 @@
-import { TokenAddress } from '@/address-book';
 import type { Chain, Address } from 'viem';
 
 export interface ContractAddresses {
@@ -9,14 +8,20 @@ export interface ContractAddresses {
   };
 }
 
-export interface TokenAddressWithIcon extends Omit<TokenAddress, 'chainId'> {
-  address: Address;
-  icon?: string;
+export type ChainContract = NonNullable<ContractAddresses[keyof ContractAddresses]>;
+
+export type TokenAddress = {
+  symbol: string;
+  name: string;
+  address: `0x${string}`;
+  logo?: string | undefined;
+  decimals: number;
 }
 
 export interface ChainConfig {
   chain: Chain;
   rpcUrls: string[];
   contracts: ContractAddresses;
-  tokens: TokenAddressWithIcon[];
+  tokens: TokenAddress[];
+  logo?: string;
 }
