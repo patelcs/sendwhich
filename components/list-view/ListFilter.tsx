@@ -3,6 +3,7 @@
 import { ListFilter as ListFilterIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
+import { uiConfigs } from '@/configs';
 import { getAllChains } from '@/configs/chain';
 import { MultiSelectFilterGroup } from './MultiSelectFilterGroup';
 
@@ -34,8 +35,12 @@ export function ListFilter({
   const chainOptions = allChains.map((chain) => ({ value: chain.id, label: chain.name }));
   // Filtering by chain is meaningless with a single chain.
   const hasChainFilter = showChainFilter && allChains.length > 1;
+  const hasDefaultsToggle = uiConfigs.defaultsFilter;
   const isAll = selected === null;
-  const isActive = !isAll || !showDefaults || extraActive;
+  const isActive = !isAll || (hasDefaultsToggle && !showDefaults) || extraActive;
+
+  // Nothing to filter by: no filter button at all.
+  if (!children && !hasDefaultsToggle && !hasChainFilter) return null;
 
   return (
     <Popover>
@@ -53,16 +58,18 @@ export function ListFilter({
         {children && (
           <>
             {children}
-            <div className="my-1 h-px bg-(--border)" />
+            {(hasDefaultsToggle || hasChainFilter) && <div className="my-1 h-px bg-(--border)" />}
           </>
         )}
-        <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-(--foreground) hover:bg-(--accent) justify-between">
-          {defaultsLabel}
-          <Switch checked={showDefaults} onCheckedChange={onShowDefaultsChange} />
-        </label>
+        {hasDefaultsToggle && (
+          <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-(--foreground) hover:bg-(--accent) justify-between">
+            {defaultsLabel}
+            <Switch checked={showDefaults} onCheckedChange={onShowDefaultsChange} />
+          </label>
+        )}
         {hasChainFilter && (
           <>
-            <div className="my-1 h-px bg-(--border)" />
+            {hasDefaultsToggle && <div className="my-1 h-px bg-(--border)" />}
             <MultiSelectFilterGroup selected={selected} onChange={onChange} options={chainOptions} allLabel="All chains" />
           </>
         )}

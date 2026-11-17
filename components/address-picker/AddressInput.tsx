@@ -24,6 +24,8 @@ interface Props extends Omit<AddressPickerProps, 'onSelect' | 'title'> {
   hint?: React.ReactNode;
   disabled?: boolean;
   autoFocus?: boolean;
+  /** No typing or pasting: tapping the field opens the picker. */
+  pickerOnly?: boolean;
 }
 
 /**
@@ -40,6 +42,7 @@ export function AddressInput({
   categories,
   strictSelection,
   chainId,
+  pickerOnly = false,
   ...fieldProps
 }: Props) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -53,6 +56,9 @@ export function AddressInput({
         onChange={(event) => onChange(event.target.value.trim())}
         spellCheck={false}
         autoComplete="off"
+        readOnly={pickerOnly}
+        onClick={pickerOnly && !fieldProps.disabled ? () => setIsPickerOpen(true) : undefined}
+        className={pickerOnly ? 'cursor-pointer' : ''}
         display={selection ? <AddressSelection {...selection} /> : undefined}
         action={
           isSet ? (

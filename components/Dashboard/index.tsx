@@ -4,7 +4,7 @@ import { useWallet } from '@/providers/WalletProvider';
 import { ListView } from '../list-view';
 import { Coins } from 'lucide-react';
 import { balanceErrorLabel, formatUnitsFixed, getBalance } from '@/web3/ERC20';
-import { FIXED_DECIMALS } from '@/configs';
+import { FIXED_DECIMALS, uiConfigs } from '@/configs';
 import { useAddressBook } from '@/address-book/AddressBookProvider';
 import { TokenAddress } from '@/address-book';
 
@@ -31,7 +31,7 @@ export default function DashBoard() {
         DefaultIcon={Coins}
         getPrimaryText={(item) => item.name}
         getSecondaryText={getBalanceText}
-        addHref="/address-book/tokens/add"
+        addHref={uiConfigs.dashboardAddButton ? '/address-book/tokens/add' : undefined}
         defaultsLabel="Default tokens"
       />
     </>

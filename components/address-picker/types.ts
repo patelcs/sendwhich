@@ -1,10 +1,14 @@
 import { Coins, Landmark, Wallet, type LucideIcon } from 'lucide-react';
 import type { ContractAddress, TokenAddress, WalletAddress } from '@/address-book';
 import type { ListItem } from '@/components/list-view/ListViewRow';
+import { env } from '@/configs/env';
 
 export type AddressCategory = 'tokens' | 'wallets' | 'contracts';
 
-export const ADDRESS_CATEGORIES: readonly AddressCategory[] = ['tokens', 'wallets', 'contracts'];
+/** Lists a non-strict picker can browse (the mini app offers contacts only). */
+export const ADDRESS_CATEGORIES: readonly AddressCategory[] = env.isMiniApp
+  ? ['wallets']
+  : ['tokens', 'wallets', 'contracts'];
 
 export const CATEGORY_META: Record<AddressCategory, { label: string; Icon: LucideIcon }> = {
   tokens: { label: 'Tokens', Icon: Coins },

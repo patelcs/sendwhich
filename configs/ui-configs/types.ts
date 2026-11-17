@@ -25,4 +25,10 @@ export interface AdapterConfigs {
   routes: RouteConfig;
   showBrandInTopNavbar: boolean;
   connectName: string;
+  /** List filters offer the "show defaults" toggle. */
+  defaultsFilter: boolean;
+  /** The portfolio list has a + button for adding tokens. */
+  dashboardAddButton: boolean;
+  /** Token addresses can be typed / pasted on the Send form (else only picked from the token list). */
+  customTokenInput: boolean;
 }

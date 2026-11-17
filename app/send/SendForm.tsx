@@ -17,6 +17,7 @@ import { AmountInput, SubmitButton } from '@/components/form';
 import { useToast } from '@/components/ui/toast';
 import ConnectButton from '@/components/wallet/WalletConnection/ConnectButton';
 import { transactionErrorToast, transactionSuccessToast } from '@/components/wallet/transactionToast';
+import { uiConfigs } from '@/configs';
 import { getChainConfig, getChainLogo } from '@/configs/chain';
 import { formatAddress } from '@/lib/format';
 import { InvalidTokenAddressError, useResolvedToken, useTokenBalance, type ResolvedToken } from '@/hooks';
@@ -111,7 +112,8 @@ export default function SendForm() {
         <AddressInput
           id="send-token"
           label="Token"
-          placeholder="Token address (0x…)"
+          placeholder={uiConfigs.customTokenInput ? 'Token address (0x…)' : 'Select a token'}
+          pickerOnly={!uiConfigs.customTokenInput}
           pickerTitle="Select token"
           categories={TOKEN_CATEGORIES}
           strictSelection

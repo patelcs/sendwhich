@@ -5,4 +5,7 @@ export const BROWSER_CONFIGS: AdapterConfigs = {
   routes: ROUTES,
   showBrandInTopNavbar: true,
   connectName: 'Connect Wallet',
+  defaultsFilter: true,
+  dashboardAddButton: true,
+  customTokenInput: true,
 } as const;
