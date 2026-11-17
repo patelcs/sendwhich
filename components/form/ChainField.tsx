@@ -18,7 +18,7 @@ interface Props {
 
 export function ChainField({ id, label, value, onChange, chains, placeholder = 'Select a chain', error }: Props) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       <Select value={value} onValueChange={(chainId) => chainId !== null && onChange(chainId)}>
         <SelectTrigger id={id} aria-invalid={!!error} className="text-base data-[size=default]:h-14">

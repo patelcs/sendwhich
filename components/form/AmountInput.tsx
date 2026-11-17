@@ -31,7 +31,7 @@ export function AmountInput({ id, label, value, onChange, decimals, symbol, bala
   const isDisabled = disabled || decimals === undefined;
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor={id}>{label}</Label>
         {balance && decimals !== undefined && (

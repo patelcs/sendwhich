@@ -26,7 +26,7 @@ export default function RootLayout({
             <AddressBookProvider>
               <PageTitleProvider>
                 <Navbar />
-                <div className="mx-auto w-full max-w-7xl px-2 pt-4 pb-[calc(5rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8 md:pt-10 md:pb-10">
+                <div className="mx-auto w-full max-w-7xl px-4 pt-5 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8 md:pt-10 md:pb-10">
                   {children}
                 </div>
               </PageTitleProvider>

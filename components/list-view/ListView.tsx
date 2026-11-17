@@ -139,7 +139,7 @@ export function ListView<LI extends ListItem>({
   });
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2">
+    <div className="flex min-h-0 flex-1 flex-col gap-3">
       <ListMenuBar
         query={filterQuery}
         onQueryChange={setFilterQuery}

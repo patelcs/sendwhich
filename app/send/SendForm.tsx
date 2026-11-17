@@ -108,7 +108,7 @@ export default function SendForm() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-5">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <AddressInput
           id="send-token"
           label="Token"

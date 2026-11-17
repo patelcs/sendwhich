@@ -36,7 +36,7 @@ export function AddressPickerDialog({ open, onOpenChange, title = 'Select addres
         className="flex h-[min(36rem,85dvh)] flex-col gap-0 overflow-hidden p-0"
       >
         <DialogTopBar>{title}</DialogTopBar>
-        <div className="bg-dotted flex min-h-0 flex-1 flex-col p-2">
+        <div className="bg-dotted flex min-h-0 flex-1 flex-col p-3">
           {/* Mounted only while open, so filters reset each time the picker opens. */}
           {open && (
             <AddressPicker

@@ -10,7 +10,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 
 export function InputField({ label, error, ...props }: Props) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <Label htmlFor={props.id}>{label}</Label>
       <Input {...props} aria-invalid={!!error} />
       {error && <p className="text-sm text-(--danger)">{error}</p>}
