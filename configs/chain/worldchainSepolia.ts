@@ -1,5 +1,6 @@
 import { worldchainSepolia } from 'viem/chains';
 import { ContractAddresses, ChainConfig, TokenAddress } from './types';
+import { nativeToken } from './native';
 
 export const WORLDCHAIN_SEPOLIA_CONTRACTS: ContractAddresses = {
   multiSender: {
@@ -13,6 +14,7 @@ export const WORLDCHAIN_SEPOLIA_RPCS = [
 ];
 
 export const WORLDCHAIN_SEPOLIA_TOKENS: TokenAddress[] = [
+  nativeToken(worldchainSepolia),
   {
     name: 'Bridged USDC',
     symbol: 'USDC.e',

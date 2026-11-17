@@ -60,6 +60,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
         connect: registry.connect.bind(registry),
         switchAccount: registry.switchAccount.bind(registry),
         switchChain: registry.switchChain.bind(registry),
+        sendTransaction: registry.sendTransaction.bind(registry),
       }}
     >
       {children}

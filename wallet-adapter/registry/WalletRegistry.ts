@@ -8,6 +8,9 @@ import {
   Status,
   WalletAdapter,
   WalletConfigs,
+  SentTransaction,
+  TransactionError,
+  TransactionRequest,
 } from '../core';
 import { RegistryEvents, RegistryInterface } from './types';
 import { Chain } from 'viem';
@@ -119,6 +122,11 @@ export class WalletRegistry extends EventEmitter<RegistryEvents> implements Regi
 
   async switchChain(chainId: number): Promise<void> {
     this._adapter?.switchChain(chainId);
+  }
+
+  async sendTransaction(request: TransactionRequest): Promise<SentTransaction> {
+    if (!this._adapter) throw new TransactionError('NotConnected', 'Connect your wallet first');
+    return this._adapter.sendTransaction(request);
   }
 
   private addAdapterOption(adapterId: string, adapterOption: AdapterOption) {

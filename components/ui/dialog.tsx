@@ -28,7 +28,7 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        'fixed inset-0 isolate z-50 bg-black/60 duration-100 backdrop-blur-sm data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0',
+        'fixed inset-0 isolate z-50 bg-(--overlay)/50 duration-100 backdrop-blur-md data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0',
         className,
       )}
       {...props}
@@ -72,6 +72,28 @@ function DialogContent({
 
 function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot="dialog-header" className={cn('flex flex-col gap-2', className)} {...props} />;
+}
+
+/** Top bar with a centered title and a close button at the right end. Use with `showCloseButton={false}` and `p-0`. */
+function DialogTopBar({ className, children, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="dialog-top-bar"
+      className={cn(
+        'relative flex h-12 shrink-0 items-center justify-center border-b border-(--border) bg-(--dialog-header) px-12',
+        className,
+      )}
+      {...props}
+    >
+      <DialogTitle className="truncate text-center">{children}</DialogTitle>
+      <DialogPrimitive.Close
+        render={<Button variant="ghost" size="icon-sm" className="absolute top-1/2 right-2 -translate-y-1/2" />}
+      >
+        <XIcon />
+        <span className="sr-only">Close</span>
+      </DialogPrimitive.Close>
+    </div>
+  );
 }
 
 function DialogFooter({
@@ -127,5 +149,6 @@ export {
   DialogOverlay,
   DialogPortal,
   DialogTitle,
+  DialogTopBar,
   DialogTrigger,
 };

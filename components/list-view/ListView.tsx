@@ -5,6 +5,8 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { ListMenuBar } from './ListMenuBar';
 import { ListViewRow, type ListItem, type TextGetter } from './ListViewRow';
 import { SelectionBar } from './SelectionBar';
+import { EmptyListMessage } from './EmptyListMessage';
+import { useListFilter } from './useListFilter';
 
 interface Props<LI extends ListItem> {
   list: LI[];
@@ -35,9 +37,15 @@ export function ListView<LI extends ListItem>({
   onDeleteSelected,
   toolbarExtra,
 }: Props<LI>): React.ReactNode {
-  const [filterQuery, setFilterQuery] = useState('');
-  const [chainFilter, setChainFilter] = useState<number[] | null>(null);
-  const [showDefaults, setShowDefaults] = useState(true);
+  const {
+    query: filterQuery,
+    setQuery: setFilterQuery,
+    chainFilter,
+    setChainFilter,
+    showDefaults,
+    setShowDefaults,
+    matchingList,
+  } = useListFilter({ list, getSearchTexts: (item) => [getPrimaryText(item), getSecondaryText?.(item)] });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSelectedExpanded, setIsSelectedExpanded] = useState(true);
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
@@ -64,18 +72,6 @@ export function ListView<LI extends ListItem>({
     setSelection(selectedIds.filter((id) => id !== item.id));
   }
 
-  function isFilterMatch(item: LI) {
-    if (!showDefaults && item.type === 'default') return false;
-    if (chainFilter && item.chainId !== undefined && !chainFilter.includes(item.chainId)) return false;
-    const query = filterQuery.trim().toLowerCase();
-    if (!query) return true;
-    const [primary, secondary] = [getPrimaryText(item), getSecondaryText?.(item)];
-    if (typeof primary === 'string' && primary.toLowerCase().includes(query)) return true;
-    if (typeof secondary === 'string' && secondary.toLowerCase().includes(query)) return true;
-    return false;
-  }
-
-  const matchingList = list.filter(isFilterMatch);
   const allSelected = matchingList.length > 0 && matchingList.every(isSelected);
 
   function selectAll() {
@@ -169,9 +165,7 @@ export function ListView<LI extends ListItem>({
             />
           );
         })}
-        {filterQuery && filteredList.length === 0 && (
-          <p className="py-8 text-center text-sm text-(--muted)">{`No results found for query: '${filterQuery}'`}</p>
-        )}
+        {filterQuery && filteredList.length === 0 && <EmptyListMessage query={filterQuery} />}
       </div>
     </div>
   );

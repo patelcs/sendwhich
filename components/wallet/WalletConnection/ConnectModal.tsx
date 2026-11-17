@@ -18,7 +18,7 @@ export default function ConnectModal({ isOpen, adapterOptions, onClose, onSelect
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-(--overlay)/50 p-4 backdrop-blur-md">
       <div
         role="dialog"
         aria-modal="true"

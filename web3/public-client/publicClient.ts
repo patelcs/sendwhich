@@ -9,7 +9,8 @@ export interface PublicClientOptions {
 const clientCache: Map<number, PublicClient> = new Map();
 
 export function getPublicClient({ chainId, rpcUrl }: PublicClientOptions): PublicClient {
-  if (clientCache.has(chainId)) return clientCache.get(chainId)!;
+  // Only the default (random-RPC) client is cached; an explicit `rpcUrl` always gets its own client.
+  if (!rpcUrl && clientCache.has(chainId)) return clientCache.get(chainId)!;
 
   const { chain, rpcUrls } = getChainConfig(chainId);
 
@@ -20,6 +21,7 @@ export function getPublicClient({ chainId, rpcUrl }: PublicClientOptions): Publi
   const publicClient = createPublicClient({
     chain: chain,
     transport: http(rpc),
-  });
+  }) as PublicClient;
+  if (!rpcUrl) clientCache.set(chainId, publicClient);
   return publicClient;
 }

@@ -11,7 +11,8 @@ import {
   AdapterId,
 } from './types';
 import { WalletConfigs } from './configs';
-import { getAddress } from 'viem';
+import { createPublicClient, fallback, getAddress, http, type Hex, type PublicClient } from 'viem';
+import { SentTransaction, TransactionError, TransactionRequest } from './transaction';
 
 export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implements AdapterInterface {
   private _status: Status = 'initializing';
@@ -20,6 +21,7 @@ export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implemen
   private _account: ActiveAccount = null;
   private _adapterOptions = new Map<string, AdapterOption>();
   private readonly _supportedChains: Chain[];
+  private readonly _publicClients = new Map<number, PublicClient>();
 
   constructor(supportedChains: Chain[]) {
     super();
@@ -52,6 +54,47 @@ export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implemen
 
   protected getChainById(chainId: number) {
     return this.supportedChains.find((c) => c.id == chainId);
+  }
+
+  /** Read-only client for `chainId`, using the chain's own `rpcUrls.default` list (with fallback). */
+  protected getPublicClient(chainId: number): PublicClient {
+    const cached = this._publicClients.get(chainId);
+    if (cached) return cached;
+    const chain = this.getChainById(chainId);
+    if (!chain) throw new TransactionError('ChainMismatch', `Chain with id ${chainId} is not supported`);
+    const client = createPublicClient({
+      chain,
+      transport: fallback(chain.rpcUrls.default.http.map((url) => http(url))),
+    }) as PublicClient;
+    this._publicClients.set(chainId, client);
+    return client;
+  }
+
+  /** Waits for `hash` to be mined and throws if it reverted. */
+  protected async waitForReceipt(chainId: number, hash: Hex): Promise<Hex> {
+    console.info(`[${this.id}] waiting for receipt`, { chainId, hash });
+    let receipt;
+    try {
+      receipt = await this.getPublicClient(chainId).waitForTransactionReceipt({ hash });
+    } catch (error) {
+      console.error(`[${this.id}] receipt lookup failed`, { chainId, hash, error });
+      throw new TransactionError('Timeout', 'Could not confirm the transaction', `Transaction ${hash} was not confirmed`, {
+        cause: error,
+      });
+    }
+    console.info(`[${this.id}] receipt`, { chainId, hash, status: receipt.status, block: receipt.blockNumber });
+    if (receipt.status === 'reverted') {
+      throw new TransactionError('Reverted', 'Transaction reverted', `Transaction ${hash} reverted on-chain`);
+    }
+    return hash;
+  }
+
+  protected assertSendable({ chainId, calls }: TransactionRequest) {
+    if (!this.activeAccount) throw new TransactionError('NotConnected', 'Connect your wallet first');
+    if (calls.length === 0) throw new TransactionError('InvalidRequest', 'Nothing to send');
+    if (!this.getChainById(chainId)) {
+      throw new TransactionError('ChainMismatch', `Chain with id ${chainId} is not supported by ${this.name}`);
+    }
   }
 
   protected updateStatus(status: Status) {
@@ -106,4 +149,5 @@ export abstract class WalletAdapter extends EventEmitter<AdapterEvents> implemen
   abstract disconnect(): Promise<void>;
   abstract switchAccount(account: Account): Promise<void>;
   abstract switchChain(chainId: number): Promise<void>;
+  abstract sendTransaction(request: TransactionRequest): Promise<SentTransaction>;
 }

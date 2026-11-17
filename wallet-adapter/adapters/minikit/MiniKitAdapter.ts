@@ -1,15 +1,36 @@
 import { initializeEruda } from '../../lib';
-import { WalletAdapter, Account, AdapterId, WalletConfigs } from '../../core';
+import {
+  WalletAdapter,
+  Account,
+  AdapterId,
+  WalletConfigs,
+  SentTransaction,
+  TransactionError,
+  TransactionRequest,
+} from '../../core';
 import { MiniKit } from '@worldcoin/minikit-js';
 import type { CommandResultByVia, MiniKitWalletAuthOptions, WalletAuthResult } from '@worldcoin/minikit-js/commands';
+import { type Chain, type Hex, isHex, toHex } from 'viem';
 import { worldchain } from 'viem/chains';
+import { toTransactionError } from './errors';
+
+/** Resolves a user-operation hash to its status / mined tx hash. Documented as public (no auth). */
+const USER_OP_STATUS_URL = 'https://developer.world.org/api/v2/minikit/userop';
+const USER_OP_POLL_INTERVAL_MS = 2_000;
+const USER_OP_TIMEOUT_MS = 120_000;
+
+interface UserOpStatus {
+  status: 'pending' | 'success' | 'failed';
+  transaction_hash: Hex | null;
+}
 
 export class MiniKitAdapter extends WalletAdapter {
   private _appId?: string;
   private _installed = false;
 
-  constructor(appId?: string) {
-    super([worldchain]);
+  /** `chain` lets the app supply World Chain with its own RPC list. */
+  constructor(appId?: string, chain: Chain = worldchain) {
+    super([chain]);
     this._appId = appId;
   }
 
@@ -82,5 +103,61 @@ export class MiniKitAdapter extends WalletAdapter {
 
   async switchChain(chainId: number): Promise<void> {
     throw new Error('Switching chain not supported');
+  }
+
+  async sendTransaction(request: TransactionRequest): Promise<SentTransaction> {
+    this.assertSendable(request);
+    const { chainId, calls } = request;
+    const transactions = calls.map(({ to, data, value }) => ({ to, data: data ?? '0x', value: toHex(value ?? BigInt(0)) }));
+    console.info(`[${this.id}] sendTransaction`, { chainId, from: this.activeAccount, transactions });
+
+    let userOpHash: string;
+    try {
+      const result = await MiniKit.sendTransaction({ chainId, transactions });
+      console.info(`[${this.id}] sendTransaction result`, result);
+      userOpHash = (result.data as { userOpHash?: string }).userOpHash ?? '';
+    } catch (error) {
+      const txError = toTransactionError(error);
+      // `NotWhitelisted` (invalid_contract): every `to` address being called must be listed under
+      // Developer Portal > Mini App > Permissions > Contract Entrypoints. For an ERC20 transfer that
+      // is the token contract itself; the Permit2 Tokens list only covers Permit2 signature transfers.
+      console.error(`[${this.id}] sendTransaction failed`, { code: txError.code, hint: txError.hint, error });
+      throw txError;
+    }
+
+    if (!isHex(userOpHash)) {
+      throw new TransactionError('Unknown', 'World App did not return a transaction id', `userOpHash: ${userOpHash}`);
+    }
+    return { id: userOpHash, wait: () => this.waitForUserOperation(chainId, userOpHash as Hex) };
+  }
+
+  /** MiniKit resolves on submission with a user-op hash; poll until it's mined, then confirm the receipt. */
+  private async waitForUserOperation(chainId: number, userOpHash: Hex): Promise<Hex> {
+    const deadline = Date.now() + USER_OP_TIMEOUT_MS;
+    while (Date.now() < deadline) {
+      let status: UserOpStatus | null = null;
+      try {
+        const response = await fetch(`${USER_OP_STATUS_URL}/${userOpHash}`);
+        if (response.ok) status = (await response.json()) as UserOpStatus;
+        else console.warn(`[${this.id}] user-op status HTTP ${response.status}`, { userOpHash });
+      } catch (error) {
+        // Network/CORS hiccups are retried until the deadline.
+        console.warn(`[${this.id}] user-op status request failed`, { userOpHash, error });
+      }
+
+      if (status) console.debug(`[${this.id}] user-op status`, { userOpHash, ...status });
+      if (status?.status === 'failed') {
+        throw new TransactionError('Reverted', 'Transaction failed', `User operation ${userOpHash} failed`);
+      }
+      if (status?.status === 'success' && status.transaction_hash) {
+        return this.waitForReceipt(chainId, status.transaction_hash);
+      }
+      await new Promise((resolve) => setTimeout(resolve, USER_OP_POLL_INTERVAL_MS));
+    }
+    throw new TransactionError(
+      'Timeout',
+      'Transaction is taking longer than expected',
+      `User operation ${userOpHash} not mined after ${USER_OP_TIMEOUT_MS / 1000}s — check World App activity`,
+    );
   }
 }

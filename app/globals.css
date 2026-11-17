@@ -7,6 +7,8 @@
   color-scheme: dark;
   --background: #0c0a14;
   --card: #15121f;
+  --dialog-header: #1b1728;
+  --overlay: #05040a;
   --foreground: #efedf5;
   --muted: #9d97ad;
   --border: #ffffff17;
@@ -16,6 +18,7 @@
   --brand-foreground: #ffffff;
   --brand-secondary: #b8f23a;
   --danger: #ef4444;
+  --success: #22c55e;
   --ring: var(--brand);
   --radius: 0.625rem;
   --dots: #ffffff0d;

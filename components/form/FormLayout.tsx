@@ -1,5 +1,5 @@
 import React, { FormHTMLAttributes } from 'react';
-import { LoaderCircle } from 'lucide-react';
+import { SubmitButton } from './SubmitButton';
 
 interface Props extends FormHTMLAttributes<HTMLFormElement> {
   title: string;
@@ -27,14 +27,9 @@ export function FormLayout({ isSaving, ...props }: Props) {
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-(--brand)/30 bg-(--brand)/10 py-2 text-sm font-semibold text-(--brand) transition-colors hover:bg-(--brand)/20 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none sm:px-6"
-          >
-            {isSaving && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
+          <SubmitButton loading={isSaving} className="flex-1 sm:flex-none sm:px-6">
             Save
-          </button>
+          </SubmitButton>
         </div>
       </form>
     </div>

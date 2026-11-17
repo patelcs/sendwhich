@@ -1,5 +1,6 @@
 import { worldchain } from 'viem/chains';
 import { ContractAddresses, ChainConfig, TokenAddress } from './types';
+import { nativeToken } from './native';
 
 export const WORLDCHAIN_CONTRACTS: ContractAddresses = {
   multiSender: {
@@ -13,6 +14,7 @@ export const WORLDCHAIN_RPCS = [
 ];
 
 export const WORLDCHAIN_TOKENS: TokenAddress[] = [
+  nativeToken(worldchain),
   {
     name: 'USD Coin',
     symbol: 'USDC',

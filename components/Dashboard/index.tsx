@@ -3,7 +3,8 @@
 import { useWallet } from '@/providers/WalletProvider';
 import { ListView } from '../list-view';
 import { Coins } from 'lucide-react';
-import { getFormattedBalance, isRpcError } from '@/web3/ERC20';
+import { balanceErrorLabel, formatUnitsFixed, getBalance } from '@/web3/ERC20';
+import { FIXED_DECIMALS } from '@/configs';
 import { useAddressBook } from '@/address-book/AddressBookProvider';
 import { TokenAddress } from '@/address-book';
 
@@ -11,15 +12,15 @@ export default function DashBoard() {
   const { activeAccount } = useWallet();
   const { tokenList } = useAddressBook();
 
-  async function getBalance({ address, decimals, symbol, chainId }: TokenAddress): Promise<string> {
+  async function getBalanceText({ address, decimals, symbol, chainId }: TokenAddress): Promise<string> {
     if (!activeAccount) return "Connect wallet to see balance";
     try {
-      const balance = await getFormattedBalance({ address, owner: activeAccount, decimals, chainId });
-      return `${balance} ${symbol}`;
+      const balance = await getBalance({ address, owner: activeAccount, chainId });
+      return `${formatUnitsFixed(balance, decimals, FIXED_DECIMALS)} ${symbol}`;
     } catch (error) {
-      // Full context (chain, RPC URL, token, cause) is logged by the ERC20 read layer.
+      // Full context (chain, RPC URL, token, cause) is logged by the token read layer.
       console.error(`[Dashboard] balance fetch failed for ${symbol} on chain ${chainId}`, error);
-      return isRpcError(error) ? 'RPC Error' : 'Balance Error';
+      return balanceErrorLabel(error);
     }
   }
 
@@ -29,7 +30,7 @@ export default function DashBoard() {
         list={tokenList}
         DefaultIcon={Coins}
         getPrimaryText={(item) => item.name}
-        getSecondaryText={getBalance}
+        getSecondaryText={getBalanceText}
         addHref="/address-book/tokens/add"
         defaultsLabel="Default tokens"
       />

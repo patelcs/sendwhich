@@ -1,6 +1,16 @@
-import { WalletAdapter, Accounts, Account, WalletConfigs, AdapterId } from '../../core';
+import {
+  WalletAdapter,
+  Accounts,
+  Account,
+  WalletConfigs,
+  AdapterId,
+  SentTransaction,
+  TransactionError,
+  TransactionRequest,
+} from '../../core';
 import { EIP6963ProviderDetail, EIP1193Provider } from './types';
-import { createWalletClient, custom, WalletClient } from 'viem';
+import { createWalletClient, custom, Hex, WalletClient } from 'viem';
+import { toTransactionError } from './errors';
 
 export class InjectedWalletAdapter extends WalletAdapter {
   private readonly _providers = new Map<string, EIP1193Provider>();
@@ -153,6 +163,44 @@ export class InjectedWalletAdapter extends WalletAdapter {
 
   async switchChain(chainId: number): Promise<void> {
     await this._clientSwitchChain(chainId, true);
+  }
+
+  async sendTransaction(request: TransactionRequest): Promise<SentTransaction> {
+    this.assertSendable(request);
+    const { chainId, calls } = request;
+    if (!this._client) throw new TransactionError('NotConnected', 'Connect your wallet first');
+
+    if (this.chainId !== chainId) await this.switchChain(chainId);
+    // switchChain swallows wallet errors, so confirm what the wallet is actually on.
+    const walletChainId = await this._client.getChainId();
+    const chain = this.getChainById(chainId)!;
+    if (walletChainId !== chainId) {
+      throw new TransactionError(
+        'ChainMismatch',
+        `Switch your wallet to ${chain.name}`,
+        `Wallet is on chain ${walletChainId}, transaction needs ${chainId}`,
+      );
+    }
+
+    const account = this.activeAccount!;
+    let hash: Hex | undefined;
+    // Wallets take one call per transaction. Later calls may depend on earlier ones (e.g. approve → spend),
+    // so each one must be mined before the next is sent.
+    for (const [index, call] of calls.entries()) {
+      if (hash) await this.waitForReceipt(chainId, hash);
+      console.info(`[${this.id}] sending call ${index + 1}/${calls.length}`, { chainId, account, call });
+      try {
+        hash = await this._client.sendTransaction({ account, chain, to: call.to, data: call.data, value: call.value });
+      } catch (error) {
+        const txError = toTransactionError(error);
+        console.error(`[${this.id}] send failed`, { code: txError.code, hint: txError.hint, call, error });
+        throw txError;
+      }
+      console.info(`[${this.id}] submitted`, { hash });
+    }
+
+    const finalHash = hash!;
+    return { id: finalHash, wait: () => this.waitForReceipt(chainId, finalHash) };
   }
 
   protected resetState(): void {

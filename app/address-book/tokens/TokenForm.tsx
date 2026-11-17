@@ -204,8 +204,8 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
 
       try {
         const resolvedAddress = await resolveAddress(trimmedAddress);
-        const [name, symbol, decimals] = await getInfo({
-          address: resolvedAddress as `0x${string}`,
+        const { name, symbol, decimals } = await getInfo({
+          address: resolvedAddress,
           chainId: watchedChainId,
         });
         if (cancelled || form.formState.isSubmitting) return;
@@ -277,7 +277,7 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
 
     let onChainValues: OnChainValues;
     try {
-      const [name, symbol, decimals] = await getInfo({
+      const { name, symbol, decimals } = await getInfo({
         address: resolvedAddress as `0x${string}`,
         chainId: data.chainId,
       });

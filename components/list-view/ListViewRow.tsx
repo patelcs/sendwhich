@@ -20,8 +20,11 @@ interface Props<LI extends ListItem> {
   item: LI;
   isFirst: boolean;
   isLast: boolean;
-  isSelected: boolean;
-  onToggle: () => void;
+  isSelected?: boolean;
+  /** Logo flip-to-select (multi-select lists). */
+  onToggle?: () => void;
+  /** Makes the whole row a single click target (pickers). */
+  onClick?: () => void;
   DefaultIcon: LucideIcon;
   getPrimaryText: TextGetter<LI>;
   getSecondaryText?: TextGetter<LI>;
@@ -35,8 +38,9 @@ export function ListViewRow<LI extends ListItem>({
   item,
   isFirst,
   isLast,
-  isSelected,
+  isSelected = false,
   onToggle,
+  onClick,
   DefaultIcon,
   getPrimaryText,
   getSecondaryText,
@@ -44,13 +48,25 @@ export function ListViewRow<LI extends ListItem>({
 }: Props<LI>): React.ReactNode {
   const primary = useMemo(() => getPrimaryText(item), [item, getPrimaryText]);
   const secondary = useMemo(() => getSecondaryText?.(item), [item, getSecondaryText]);
+  const Logo = onToggle ? 'button' : 'div';
 
   return (
     <div
       ref={ref}
-      className={`relative flex cursor-pointer items-start gap-4 rounded-xs px-2 py-3.5 transition-colors select-none ${isSelected ? 'bg-(--brand)/10' : 'bg-(--card)/60'} ${isFirst ? 'rounded-t-xl' : ''} ${isLast ? 'rounded-b-xl' : ''}`}
+      {...(onClick && {
+        role: 'button',
+        tabIndex: 0,
+        onClick,
+        onKeyDown: (event: React.KeyboardEvent) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onClick();
+          }
+        },
+      })}
+      className={`relative flex cursor-pointer items-start gap-4 ${onClick ? 'outline-none hover:bg-(--accent) focus-visible:ring-2 focus-visible:ring-(--brand)/40' : ''} rounded-xs px-2 py-3.5 transition-colors select-none ${isSelected ? 'bg-(--brand)/10' : 'bg-(--card)/60'} ${isFirst ? 'rounded-t-xl' : ''} ${isLast ? 'rounded-b-xl' : ''}`}
     >
-      <button onClick={onToggle} className="relative size-10 shrink-0 perspective-[600px]">
+      <Logo {...(onToggle && { type: 'button' as const, onClick: onToggle })} className="relative size-10 shrink-0 perspective-[600px]">
         <div
           className={`relative size-full transform-3d transition-transform duration-300 ease-in-out ${isSelected ? 'rotate-y-180' : ''}`}
         >
@@ -70,7 +86,7 @@ export function ListViewRow<LI extends ListItem>({
             )}
           </div>
         </div>
-      </button>
+      </Logo>
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-md font-medium text-(--foreground)">

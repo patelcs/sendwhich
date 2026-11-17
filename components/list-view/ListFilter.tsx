@@ -1,10 +1,10 @@
 'use client';
 
 import { ListFilter as ListFilterIcon } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
 import { getAllChains } from '@/configs/chain';
+import { MultiSelectFilterGroup } from './MultiSelectFilterGroup';
 
 interface Props {
   /** Selected chain ids; `null` means every supported chain. */
@@ -14,6 +14,10 @@ interface Props {
   onShowDefaultsChange: (show: boolean) => void;
   defaultsLabel?: string;
   showChainFilter?: boolean;
+  /** Extra filter sections rendered first (e.g. a list/category choice). */
+  children?: React.ReactNode;
+  /** Whether the extra sections narrow the list (highlights the button). */
+  extraActive?: boolean;
 }
 
 export function ListFilter({
@@ -23,28 +27,15 @@ export function ListFilter({
   onShowDefaultsChange,
   defaultsLabel = 'Defaults',
   showChainFilter = true,
+  children,
+  extraActive = false,
 }: Props): React.ReactNode {
   const allChains = getAllChains();
-  const allChainIds = allChains.map((chain) => chain.id);
+  const chainOptions = allChains.map((chain) => ({ value: chain.id, label: chain.name }));
   // Filtering by chain is meaningless with a single chain.
   const hasChainFilter = showChainFilter && allChains.length > 1;
   const isAll = selected === null;
-  const isActive = !isAll || !showDefaults;
-
-  function isChecked(chainId: number) {
-    return isAll || selected.includes(chainId);
-  }
-
-  function toggleChain(chainId: number) {
-    const current = selected ?? allChainIds;
-    if (current.includes(chainId)) {
-      // Keep at least one chain selected.
-      if (current.length > 1) onChange(current.filter((id) => id !== chainId));
-      return;
-    }
-    const next = [...current, chainId];
-    onChange(allChainIds.every((id) => next.includes(id)) ? null : next);
-  }
+  const isActive = !isAll || !showDefaults || extraActive;
 
   return (
     <Popover>
@@ -59,6 +50,12 @@ export function ListFilter({
         <ListFilterIcon size={16} aria-hidden="true" />
       </PopoverTrigger>
       <PopoverContent align="end" className="w-56 gap-1 p-1">
+        {children && (
+          <>
+            {children}
+            <div className="my-1 h-px bg-(--border)" />
+          </>
+        )}
         <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-(--foreground) hover:bg-(--accent) justify-between">
           {defaultsLabel}
           <Switch checked={showDefaults} onCheckedChange={onShowDefaultsChange} />
@@ -66,19 +63,7 @@ export function ListFilter({
         {hasChainFilter && (
           <>
             <div className="my-1 h-px bg-(--border)" />
-            <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-(--foreground) hover:bg-(--accent)">
-              <Checkbox checked={isAll} onCheckedChange={() => onChange(null)} />
-              All chains
-            </label>
-            <div className="my-1 h-px bg-(--border)" />
-            <div className="themed-scrollbar flex max-h-64 flex-col gap-0.5 overflow-y-auto">
-              {allChains.map((chain) => (
-                <label key={chain.id} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-(--foreground) hover:bg-(--accent)">
-                  <Checkbox checked={isChecked(chain.id)} onCheckedChange={() => toggleChain(chain.id)} />
-                  {chain.name}
-                </label>
-              ))}
-            </div>
+            <MultiSelectFilterGroup selected={selected} onChange={onChange} options={chainOptions} allLabel="All chains" />
           </>
         )}
       </PopoverContent>

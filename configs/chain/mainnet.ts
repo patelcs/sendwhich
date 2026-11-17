@@ -1,11 +1,13 @@
 import { mainnet } from 'viem/chains';
 import { ContractAddresses, ChainConfig, TokenAddress } from './types';
+import { nativeToken } from './native';
 
 export const MAINNET_CONTRACTS: ContractAddresses = {} as const;
 
 export const MAINNET_RPCS = ['https://eth-mainnet.g.alchemy.com/public', 'https://mainnet.gateway.tenderly.co'];
 
 export const MAINNET_TOKENS: TokenAddress[] = [
+  nativeToken(mainnet),
   {
     name: 'USD Coin',
     symbol: 'USDC',

@@ -1,5 +1,6 @@
 import { type Chain, type Address as ViemAddress, isAddress } from 'viem';
 import z from 'zod';
+import type { SentTransaction, TransactionRequest } from './transaction';
 
 export type Status = 'initializing' | 'initialized' | 'connecting' | 'connected' | 'disconnected';
 
@@ -40,4 +41,5 @@ export interface AdapterInterface {
   disconnect(): Promise<void>;
   switchAccount(account: Account): void;
   switchChain(chainId: number): Promise<void>;
+  sendTransaction(request: TransactionRequest): Promise<SentTransaction>;
 }

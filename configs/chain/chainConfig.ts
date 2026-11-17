@@ -31,6 +31,11 @@ export function getChainLogo(chainId: number): string | undefined {
   return getChainConfig(chainId).logo;
 }
 
+/** The chain with its `default` RPCs replaced by the app's curated list (used by wallet adapters). */
+export function withAppRpcUrls({ chain, rpcUrls }: ChainConfig): Chain {
+  return { ...chain, rpcUrls: { ...chain.rpcUrls, default: { http: rpcUrls } } };
+}
+
 export function getAllChains(): readonly Chain[] {
   return getAllChainConfigs().map(i => i.chain);
 }
@@ -48,3 +53,9 @@ export function getDefaultContracts() {
 }
 
 
+
+/** Block-explorer link for a transaction, if the chain has an explorer. */
+export function getExplorerTxUrl(chainId: number, hash: string): string | undefined {
+  const explorer = getChainConfig(chainId).chain.blockExplorers?.default.url;
+  return explorer ? `${explorer.replace(/\/$/, '')}/tx/${hash}` : undefined;
+}

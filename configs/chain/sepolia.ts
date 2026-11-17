@@ -1,5 +1,6 @@
 import { sepolia } from 'viem/chains';
 import { ContractAddresses, ChainConfig, TokenAddress } from './types';
+import { nativeToken } from './native';
 
 export const SEPOLIA_CONTRACTS: ContractAddresses = {
   multiSender: {
@@ -11,6 +12,7 @@ export const SEPOLIA_CONTRACTS: ContractAddresses = {
 export const SEPOLIA_RPCS = ['https://sepolia.gateway.tenderly.co'];
 
 export const SEPOLIA_TOKENS: TokenAddress[] = [
+  nativeToken(sepolia),
   {
     name: 'USDC',
     symbol: 'USDC',
