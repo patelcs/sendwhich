@@ -59,7 +59,7 @@ export default function WalletForm({ entry, onDone, onCancel }: WalletFormProps)
 
   return (
     <FormLayout
-      title={isEdit ? 'Edit wallet' : 'Add wallet'}
+      title={isEdit ? 'Edit Wallet' : 'Add Wallet'}
       onSubmit={form.handleSubmit(handleSubmit)}
       onCancel={onCancel ?? backToList}
       error={error}

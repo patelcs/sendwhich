@@ -80,7 +80,7 @@ export default function ContractForm({ entry, onDone, onCancel }: ContractFormPr
 
   return (
     <FormLayout
-      title={isEdit ? 'Edit contract' : 'Add contract'}
+      title={isEdit ? 'Edit Contract' : 'Add Contract'}
       onSubmit={form.handleSubmit(handleSubmit)}
       onCancel={onCancel ?? backToList}
       error={error}

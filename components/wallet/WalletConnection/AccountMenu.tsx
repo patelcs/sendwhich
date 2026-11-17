@@ -48,7 +48,7 @@ export default function AccountMenu() {
         aria-haspopup="dialog"
         aria-controls="account-menu"
         aria-label={`Account: ${activeAccountLabel}`}
-        className="flex items-center justify-center gap-2 rounded-lg border border-(--brand)/30 bg-(--brand)/10 px-2.5 py-2 text-sm font-semibold text-(--brand) shadow-sm shadow-(--brand)/15 transition-colors hover:border-(--brand)/50 hover:bg-(--brand)/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand) sm:px-3"
+        className="flex h-10 items-center justify-center gap-2 rounded-lg border border-(--brand)/30 bg-(--brand)/10 px-3 text-sm font-semibold text-(--brand) shadow-sm shadow-(--brand)/15 transition-colors hover:border-(--brand)/50 hover:bg-(--brand)/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand)"
       >
         <Wallet size={16} className="shrink-0" aria-hidden="true" />
         <span className="hidden max-w-28 truncate sm:inline">{activeAccountLabel}</span>
@@ -78,7 +78,7 @@ export default function AccountMenu() {
                   type="button"
                   onClick={() => handleSelect(account)}
                   aria-current={isSelected}
-                  className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${
+                  className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-base transition-colors ${
                     isSelected ? 'bg-(--brand)/10 text-(--brand)' : 'text-(--foreground) hover:bg-(--accent)'
                   }`}
                 >
@@ -97,7 +97,7 @@ export default function AccountMenu() {
           <button
             type="button"
             onClick={handleDisconnect}
-            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-medium text-(--danger) transition-colors hover:bg-(--danger)/10"
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-base font-medium text-(--danger) transition-colors hover:bg-(--danger)/10"
           >
             <LogOut size={14} aria-hidden="true" />
             Disconnect

@@ -2,6 +2,7 @@
 
 import { useWallet } from '@/providers/WalletProvider';
 import { ListView } from '../list-view';
+import { usePageTitle } from '../layout/PageTitle';
 import { Coins } from 'lucide-react';
 import { balanceErrorLabel, formatUnitsFixed, getBalance } from '@/web3/ERC20';
 import { FIXED_DECIMALS, uiConfigs } from '@/configs';
@@ -11,6 +12,7 @@ import { TokenAddress } from '@/address-book';
 export default function DashBoard() {
   const { activeAccount } = useWallet();
   const { tokenList } = useAddressBook();
+  usePageTitle('Portfolio');
 
   async function getBalanceText({ address, decimals, symbol, chainId }: TokenAddress): Promise<string> {
     if (!activeAccount) return "Connect wallet to see balance";

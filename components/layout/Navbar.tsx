@@ -3,9 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { MoreHorizontal, Zap } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import { uiConfigs } from '@/configs';
+import { APP_NAME } from '@/lib/constants';
 import { WalletConnection } from '../wallet';
+import { BrandLogo } from './BrandLogo';
+import { usePageTitleValue } from './PageTitle';
 
 function isActive(pathname: string, href: string) {
   if (href == '/') return pathname === href;
@@ -16,18 +19,21 @@ export default function Navbar() {
   const { showBrandInTopNavbar, routes } = uiConfigs;
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname();
+  const title = usePageTitleValue() ?? APP_NAME;
 
   return (
     <>
       <nav className={'sticky top-0 z-50 border-b border-(--navbar-border) bg-(--navbar-background)'}>
         <div className="flex h-16 w-full items-center px-4 sm:px-6 lg:px-8">
           {showBrandInTopNavbar && (
-            <Link href="/" className="flex items-center gap-2 text-lg font-bold text-(--navbar-foreground)">
-              <Zap size={22} className="text-(--brand)" />
-              <span className="bg-linear-to-r from-(--brand) to-(--brand-secondary) bg-clip-text text-transparent">
-                SendWhich
-              </span>
-            </Link>
+            <div className="flex min-w-0 items-center gap-2 text-lg font-bold text-(--navbar-foreground)">
+              <Link href="/" aria-label={`${APP_NAME} home`} className="shrink-0">
+                <BrandLogo />
+              </Link>
+              <h1 className="truncate text-brand-gradient">
+                {title}
+              </h1>
+            </div>
           )}
 
           <div className="ml-8 hidden items-center gap-1 md:flex">
@@ -74,7 +80,7 @@ export default function Navbar() {
                   className={sectionIndex > 0 ? 'mt-4 border-t border-(--border) pt-4' : ''}
                 >
                   {section.title && (
-                    <p className="px-3 pb-1.5 text-xs font-semibold tracking-wide text-(--muted) uppercase">
+                    <p className="px-2 pb-1.5 text-xs font-semibold tracking-wide text-(--muted) uppercase">
                       {section.title}
                     </p>
                   )}
@@ -83,7 +89,7 @@ export default function Navbar() {
                     {section.items.map(({ href, icon: Icon, label }) => {
                       const isExternal = href.startsWith('http');
                       const className =
-                        'flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-(--foreground) transition-colors hover:bg-(--accent)';
+                        'flex items-center gap-4 rounded-xl px-2 py-3.5 text-base font-medium text-(--foreground) transition-colors hover:bg-(--accent)';
                       const contents = (
                         <>
                           <Icon size={20} className="text-(--brand)" aria-hidden="true" />

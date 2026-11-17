@@ -82,11 +82,11 @@ function FieldConflictTable({ fields }: { fields: ConflictField[] }) {
     <table className="w-full table-fixed border-separate border-spacing-0 overflow-hidden rounded-lg border border-(--border) text-sm">
       <thead>
         <tr>
-          <th className="border-b border-(--border) px-3 py-2 text-left text-xs font-medium text-(--muted)" />
-          <th className="border-b border-(--border) bg-(--input-bg) px-3 py-2 text-left text-xs font-medium text-(--muted)">
+          <th className="border-b border-(--border) px-3 py-2 text-left text-sm font-medium text-(--muted)" />
+          <th className="border-b border-(--border) bg-(--input-bg) px-3 py-2 text-left text-sm font-medium text-(--muted)">
             In form
           </th>
-          <th className="border-b border-(--border) bg-(--input-bg) px-3 py-2 text-left text-xs font-medium text-(--muted)">
+          <th className="border-b border-(--border) bg-(--input-bg) px-3 py-2 text-left text-sm font-medium text-(--muted)">
             On-chain
           </th>
         </tr>
@@ -96,7 +96,7 @@ function FieldConflictTable({ fields }: { fields: ConflictField[] }) {
           <tr key={key}>
             <th
               scope="row"
-              className={`px-3 py-2 text-left text-xs font-medium text-(--muted) ${index !== 0 ? 'border-t border-(--border)' : ''}`}
+              className={`px-3 py-2 text-left text-sm font-medium text-(--muted) ${index !== 0 ? 'border-t border-(--border)' : ''}`}
             >
               {label}
             </th>
@@ -135,28 +135,28 @@ function FieldConflictPicker({
       className="grid-cols-2 items-start gap-3"
     >
       <Label className="flex cursor-pointer flex-col gap-3 rounded-lg border border-(--border) bg-(--input-bg) p-3 text-(--foreground) has-data-checked:border-(--brand)/40 has-data-checked:bg-(--brand)/10">
-        <span className="flex items-center gap-2 text-xs font-medium text-(--muted)">
+        <span className="flex items-center gap-2 text-sm font-medium text-(--muted)">
           <RadioGroupItem value="form" />
           In form
         </span>
         <div className="flex flex-col gap-2">
           {fields.map((field) => (
             <div key={field.key}>
-              <p className="text-xs text-(--muted)">{field.label}</p>
+              <p className="text-sm text-(--muted)">{field.label}</p>
               <p className="truncate font-mono text-sm">{field.formValue}</p>
             </div>
           ))}
         </div>
       </Label>
       <Label className="flex cursor-pointer flex-col gap-3 rounded-lg border border-(--border) bg-(--input-bg) p-3 text-(--foreground) has-data-checked:border-(--brand)/40 has-data-checked:bg-(--brand)/10">
-        <span className="flex items-center gap-2 text-xs font-medium text-(--muted)">
+        <span className="flex items-center gap-2 text-sm font-medium text-(--muted)">
           <RadioGroupItem value="onchain" />
           On-chain
         </span>
         <div className="flex flex-col gap-2">
           {fields.map((field) => (
             <div key={field.key}>
-              <p className="text-xs text-(--muted)">{field.label}</p>
+              <p className="text-sm text-(--muted)">{field.label}</p>
               <p className="truncate font-mono text-sm">{field.onChainValue}</p>
             </div>
           ))}
@@ -341,7 +341,7 @@ export default function TokenForm({ entry, onDone, onCancel }: TokenFormProps) {
   return (
     <>
       <FormLayout
-        title={isEdit ? 'Edit token' : 'Add token'}
+        title={isEdit ? 'Edit Token' : 'Add Token'}
         onSubmit={form.handleSubmit(handleSubmit)}
         onCancel={onCancel ?? backToList}
         error={error}

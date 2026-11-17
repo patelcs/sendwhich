@@ -62,7 +62,7 @@ export function ListFilter({
           </>
         )}
         {hasDefaultsToggle && (
-          <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-(--foreground) hover:bg-(--accent) justify-between">
+          <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-base text-(--foreground) hover:bg-(--accent) justify-between">
             {defaultsLabel}
             <Switch checked={showDefaults} onCheckedChange={onShowDefaultsChange} />
           </label>

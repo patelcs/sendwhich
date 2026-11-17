@@ -6,7 +6,7 @@ import { ListMenuBar } from './ListMenuBar';
 import { ListViewRow, type ListItem, type TextGetter } from './ListViewRow';
 import { SelectionBar } from './SelectionBar';
 import { EmptyListMessage } from './EmptyListMessage';
-import { useListFilter } from './useListFilter';
+import { useListFilter, type SearchTextsGetter } from './useListFilter';
 
 interface Props<LI extends ListItem> {
   list: LI[];
@@ -21,6 +21,20 @@ interface Props<LI extends ListItem> {
   showChainFilter?: boolean;
   onDeleteSelected?: (items: LI[]) => void;
   toolbarExtra?: React.ReactNode;
+  /** Picker mode: tapping a row calls this instead of multi-select. */
+  onItemClick?: (item: LI) => void;
+  /** Per-item fallback icon (overrides `DefaultIcon`). */
+  getDefaultIcon?: (item: LI) => LucideIcon;
+  /** Texts the search matches; defaults to the primary and secondary text. */
+  getSearchTexts?: SearchTextsGetter<LI>;
+  initialChainFilter?: number[] | null;
+  /** Extra predicate for filters owned by the caller (e.g. category). */
+  predicate?: (item: LI) => boolean;
+  /** Extra sections inside the filter popover. */
+  filterSections?: React.ReactNode;
+  filterSectionsActive?: boolean;
+  /** Shown when nothing matches and there's no search query. */
+  emptyText?: string;
 }
 
 export function ListView<LI extends ListItem>({
@@ -36,6 +50,14 @@ export function ListView<LI extends ListItem>({
   showChainFilter = true,
   onDeleteSelected,
   toolbarExtra,
+  onItemClick,
+  getDefaultIcon,
+  getSearchTexts,
+  initialChainFilter,
+  predicate,
+  filterSections,
+  filterSectionsActive,
+  emptyText,
 }: Props<LI>): React.ReactNode {
   const {
     query: filterQuery,
@@ -45,7 +67,12 @@ export function ListView<LI extends ListItem>({
     showDefaults,
     setShowDefaults,
     matchingList,
-  } = useListFilter({ list, getSearchTexts: (item) => [getPrimaryText(item), getSecondaryText?.(item)] });
+  } = useListFilter({
+    list,
+    getSearchTexts: getSearchTexts ?? ((item) => [getPrimaryText(item), getSecondaryText?.(item)]),
+    initialChainFilter,
+    predicate,
+  });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSelectedExpanded, setIsSelectedExpanded] = useState(true);
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
@@ -103,10 +130,10 @@ export function ListView<LI extends ListItem>({
       nextTops.set(id, top);
       const prevTop = rowTops.current.get(id);
       if (reduceMotion || prevTop === undefined || prevTop === top) return;
-      el.animate(
-        [{ transform: `translateY(${prevTop - top}px)` }, { transform: 'translateY(0)' }],
-        { duration: 300, easing: 'ease-in-out' },
-      );
+      el.animate([{ transform: `translateY(${prevTop - top}px)` }, { transform: 'translateY(0)' }], {
+        duration: 300,
+        easing: 'ease-in-out',
+      });
     });
     rowTops.current = nextTops;
   });
@@ -127,6 +154,8 @@ export function ListView<LI extends ListItem>({
         addHref={addHref}
         onDeleteSelected={onDeleteSelected && deleteSelected}
         extra={toolbarExtra}
+        filterSections={filterSections}
+        filterSectionsActive={filterSectionsActive}
       />
 
       {isSelecting && (
@@ -156,8 +185,9 @@ export function ListView<LI extends ListItem>({
               isFirst={isFirst}
               isLast={isLast}
               isSelected={selected}
-              onToggle={() => (selected ? unSelectItem(item) : selectItem(item))}
-              DefaultIcon={DefaultIcon}
+              onToggle={onItemClick ? undefined : () => (selected ? unSelectItem(item) : selectItem(item))}
+              onClick={onItemClick && (() => onItemClick(item))}
+              DefaultIcon={getDefaultIcon?.(item) ?? DefaultIcon}
               getPrimaryText={getPrimaryText}
               getSecondaryText={getSecondaryText}
               getTertiaryText={getTertiaryText}
@@ -165,7 +195,9 @@ export function ListView<LI extends ListItem>({
             />
           );
         })}
-        {filterQuery && filteredList.length === 0 && <EmptyListMessage query={filterQuery} />}
+        {filteredList.length === 0 && (filterQuery || emptyText) && (
+          <EmptyListMessage query={filterQuery} emptyText={emptyText} />
+        )}
       </div>
     </div>
   );

@@ -83,15 +83,26 @@ body {
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Dotted page background; also used inside dialogs. */
+@utility bg-dotted {
+  background:
+    radial-gradient(var(--dots) 1.2px, transparent 1.2px) 0 0 / 18px 18px,
+    var(--background);
+}
+
+/* Brand gradient text: navbar and dialog titles. */
+@utility text-brand-gradient {
+  background-image: linear-gradient(to right, var(--brand), var(--brand-secondary));
+  background-clip: text;
+  color: transparent;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply text-foreground;
-    background:
-      radial-gradient(var(--dots) 1.2px, transparent 1.2px) 0 0 / 18px 18px,
-      var(--background);
+    @apply text-foreground bg-dotted;
   }
   html {
     @apply font-sans;

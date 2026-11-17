@@ -31,6 +31,9 @@ export default function ChainMenu() {
 
   const activeChainName = activeChain?.name ?? `Chain ${chainId}`;
 
+  // `supportedChains` are the connected wallet's chains: with one (or none) there's nothing to switch to.
+  if (supportedChains.length <= 1) return null;
+
   return (
     <div ref={containerRef} className="relative">
       <button
@@ -40,7 +43,7 @@ export default function ChainMenu() {
         aria-haspopup="dialog"
         aria-controls="chain-menu"
         aria-label={`Network: ${activeChainName}`}
-        className="flex items-center justify-center gap-2 rounded-lg border border-(--brand)/30 bg-(--brand)/10 px-2.5 py-2 text-sm font-semibold text-(--brand) shadow-sm shadow-(--brand)/15 transition-colors hover:border-(--brand)/50 hover:bg-(--brand)/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand) sm:px-3"
+        className="flex h-10 items-center justify-center gap-2 rounded-lg border border-(--brand)/30 bg-(--brand)/10 px-3 text-sm font-semibold text-(--brand) shadow-sm shadow-(--brand)/15 transition-colors hover:border-(--brand)/50 hover:bg-(--brand)/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand)"
       >
         <Waypoints size={16} className="shrink-0" aria-hidden="true" />
         <span className="hidden max-w-28 truncate sm:inline">{activeChainName}</span>
@@ -70,7 +73,7 @@ export default function ChainMenu() {
                   type="button"
                   onClick={() => handleSelect(chain.id)}
                   aria-current={isSelected}
-                  className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${
+                  className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-base transition-colors ${
                     isSelected ? 'bg-(--brand)/10 text-(--brand)' : 'text-(--foreground) hover:bg-(--accent)'
                   }`}
                 >

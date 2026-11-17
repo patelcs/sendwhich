@@ -13,7 +13,7 @@ export function InputField({ label, error, ...props }: Props) {
     <div className="space-y-1.5">
       <Label htmlFor={props.id}>{label}</Label>
       <Input {...props} aria-invalid={!!error} />
-      {error && <p className="text-xs text-(--danger)">{error}</p>}
+      {error && <p className="text-sm text-(--danger)">{error}</p>}
     </div>
   );
 }

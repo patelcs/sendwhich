@@ -57,7 +57,7 @@ export function AddressField({
       </div>
       <div
         aria-invalid={!!error}
-        className="flex min-h-10 items-stretch overflow-hidden rounded-lg border border-(--border) bg-(--input-bg) transition-colors focus-within:ring-2 focus-within:ring-(--brand)/40 aria-invalid:border-(--danger) aria-invalid:focus-within:ring-(--danger)/40 has-disabled:opacity-60"
+        className="flex min-h-14 items-stretch overflow-hidden rounded-lg border border-(--border) bg-(--input-bg) transition-colors focus-within:ring-2 focus-within:ring-(--brand)/40 aria-invalid:border-(--danger) aria-invalid:focus-within:ring-(--danger)/40 has-disabled:opacity-60"
       >
         <div className="flex min-w-0 flex-1 items-center">
           {display ?? (
@@ -71,16 +71,17 @@ export function AddressField({
                 onChange?.(e);
               }}
               aria-invalid={!!error}
-              className={`block w-full resize-none overflow-hidden bg-transparent px-3 py-2 font-mono text-[11px] tracking-tight break-all sm:text-sm sm:tracking-normal text-(--foreground) outline-none placeholder:text-(--muted) disabled:cursor-not-allowed ${className}`}
+              // 16px like other inputs; long addresses wrap and the field grows (see `resize`).
+              className={`block w-full resize-none overflow-hidden bg-transparent px-3 py-2 text-base break-all text-(--foreground) outline-none placeholder:text-(--muted) disabled:cursor-not-allowed ${className}`}
             />
           )}
         </div>
         {action && <div className="flex shrink-0 border-l border-(--border)">{action}</div>}
       </div>
       {error ? (
-        <p className="text-xs text-(--danger)">{error}</p>
+        <p className="text-sm text-(--danger)">{error}</p>
       ) : (
-        hint && <div className="text-xs text-(--muted)">{hint}</div>
+        hint && <div className="text-sm text-(--muted)">{hint}</div>
       )}
     </div>
   );

@@ -14,6 +14,7 @@ import {
   type AddressSelectionData,
 } from '@/components/address-picker';
 import { AmountInput, SubmitButton } from '@/components/form';
+import { usePageTitle } from '@/components/layout/PageTitle';
 import { useToast } from '@/components/ui/toast';
 import ConnectButton from '@/components/wallet/WalletConnection/ConnectButton';
 import { transactionErrorToast, transactionSuccessToast } from '@/components/wallet/transactionToast';
@@ -40,6 +41,7 @@ export default function SendForm() {
   const { activeAccount, chainId, sendTransaction } = useWallet();
   const { tokenList } = useAddressBook();
   const toast = useToast();
+  usePageTitle('Send');
 
   const [tokenInput, setTokenInput] = useState('');
   const [pickedToken, setPickedToken] = useState<TokenAddress | null>(null);
@@ -106,8 +108,6 @@ export default function SendForm() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-5">
-      <h1 className="text-center text-lg font-bold text-(--foreground)">Send Tokens</h1>
-
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <AddressInput
           id="send-token"
@@ -161,13 +161,11 @@ export default function SendForm() {
 
         <div className="pt-1">
           {activeAccount ? (
-            <SubmitButton loading={isBusy} disabled={!canSubmit} className="w-full py-2.5">
+            <SubmitButton loading={isBusy} disabled={!canSubmit} className="w-full">
               {STAGE_LABEL[stage]}
             </SubmitButton>
           ) : (
-            <div className="flex justify-center">
-              <ConnectButton />
-            </div>
+            <ConnectButton className="h-12 w-full text-base" />
           )}
         </div>
       </form>

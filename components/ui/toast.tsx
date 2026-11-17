@@ -62,11 +62,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             <div
               key={id}
               role={variant === 'error' ? 'alert' : 'status'}
-              className="pointer-events-auto flex w-full max-w-sm animate-in items-start gap-3 rounded-xl border border-(--border) bg-(--card) p-3 text-sm shadow-2xl fade-in-0 slide-in-from-bottom-2"
+              className="pointer-events-auto flex w-full max-w-sm animate-in items-start gap-3 rounded-xl border border-(--border) bg-(--card) px-3 py-3.5 text-sm shadow-2xl fade-in-0 slide-in-from-bottom-2"
             >
               <Icon size={18} className={`mt-0.5 shrink-0 ${className}`} aria-hidden="true" />
               <div className="min-w-0 flex-1">
-                <p className="font-medium text-(--foreground)">{title}</p>
+                <p className="text-base font-medium text-(--foreground)">{title}</p>
                 {description && <p className="mt-0.5 break-words text-(--muted)">{description}</p>}
                 {action && (
                   <a

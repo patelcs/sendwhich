@@ -52,12 +52,12 @@ export function AmountInput({ id, label, value, onChange, decimals, symbol, bala
           className={`font-mono ${symbol ? 'pr-20' : ''}`}
         />
         {symbol && (
-          <span className="pointer-events-none absolute top-1/2 right-3 max-w-16 -translate-y-1/2 truncate text-sm text-(--muted)">
+          <span className="pointer-events-none absolute top-1/2 right-3 max-w-16 -translate-y-1/2 truncate text-base text-(--muted)">
             {symbol}
           </span>
         )}
       </div>
-      {error && <p className="text-xs text-(--danger)">{error}</p>}
+      {error && <p className="text-sm text-(--danger)">{error}</p>}
     </div>
   );
 }
@@ -84,7 +84,7 @@ function BalanceLabel({
   else return null;
 
   return (
-    <div className="flex min-w-0 items-center gap-2 text-xs text-(--muted)">
+    <div className="flex min-w-0 items-center gap-2 text-sm text-(--muted)">
       <span className="truncate">Balance: {text}</span>
       <button
         type="button"

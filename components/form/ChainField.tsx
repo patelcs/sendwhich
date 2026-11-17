@@ -21,7 +21,7 @@ export function ChainField({ id, label, value, onChange, chains, placeholder = '
     <div className="space-y-1.5">
       <Label htmlFor={id}>{label}</Label>
       <Select value={value} onValueChange={(chainId) => chainId !== null && onChange(chainId)}>
-        <SelectTrigger id={id} aria-invalid={!!error}>
+        <SelectTrigger id={id} aria-invalid={!!error} className="text-base data-[size=default]:h-14">
           <SelectValue placeholder={placeholder}>
             {(chainId: number) => {
               const chain = chains.find((c) => c.id === chainId);
@@ -40,7 +40,7 @@ export function ChainField({ id, label, value, onChange, chains, placeholder = '
           ))}
         </SelectContent>
       </Select>
-      {error && <p className="text-xs text-(--danger)">{error}</p>}
+      {error && <p className="text-sm text-(--danger)">{error}</p>}
     </div>
   );
 }

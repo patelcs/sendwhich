@@ -43,7 +43,7 @@ export function MultiSelectFilterGroup<T extends string | number>({
 
   return (
     <>
-      <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-(--foreground) hover:bg-(--accent)">
+      <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-base text-(--foreground) hover:bg-(--accent)">
         <Checkbox checked={isAll} onCheckedChange={() => onChange(null)} />
         {allLabel}
       </label>
@@ -52,7 +52,7 @@ export function MultiSelectFilterGroup<T extends string | number>({
         {options.map((option) => (
           <label
             key={option.value}
-            className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-(--foreground) hover:bg-(--accent)"
+            className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-base text-(--foreground) hover:bg-(--accent)"
           >
             <Checkbox checked={isAll || selected.includes(option.value)} onCheckedChange={() => toggle(option.value)} />
             {option.label}

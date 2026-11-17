@@ -89,13 +89,13 @@ export function ListViewRow<LI extends ListItem>({
       </Logo>
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-md font-medium text-(--foreground)">
+        <p className="truncate text-base font-medium text-(--foreground)">
           <ItemText value={primary} />
         </p>
         {secondary !== undefined && (
           <p
             className={`truncate text-(--muted) ${
-              secondaryTextVariant === 'address' ? 'font-mono text-[11px] tracking-tight md:text-xs' : 'text-sm'
+              secondaryTextVariant === 'address' ? 'font-mono text-[11px] tracking-tight md:text-sm md:tracking-normal' : 'text-sm'
             }`}
           >
             <ItemText value={secondary} skeletonWidthClassName="w-16" />

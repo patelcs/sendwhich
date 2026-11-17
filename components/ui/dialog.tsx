@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 import { cn } from 'cn';
 
@@ -85,7 +86,10 @@ function DialogTopBar({ className, children, ...props }: React.ComponentProps<'d
       )}
       {...props}
     >
-      <DialogTitle className="truncate text-center">{children}</DialogTitle>
+      <div className="flex min-w-0 items-center gap-2">
+        <BrandLogo size={20} />
+        <DialogTitle className="truncate text-lg font-bold text-brand-gradient">{children}</DialogTitle>
+      </div>
       <DialogPrimitive.Close
         render={<Button variant="ghost" size="icon-sm" className="absolute top-1/2 right-2 -translate-y-1/2" />}
       >
